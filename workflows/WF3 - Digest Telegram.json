@@ -1,0 +1,447 @@
+{
+  "name": "WF3 - Digest Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "5287456e-c505-4112-bfbd-63b3a455450c",
+      "name": "Chaque matin 8h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "profil"
+        },
+        "options": {}
+      },
+      "id": "a70e27db-2b69-4575-8e66-37e1f7bf10c6",
+      "name": "Lire profil",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        112
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "c3ec117e-6d95-4c4d-8df8-ac2d8fe68555",
+      "name": "Test manuel",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1124099516,
+          "cachedResultName": "offres"
+        },
+        "options": {}
+      },
+      "id": "cc895a83-b7e0-4072-9981-bd003badce51",
+      "name": "Lire offres",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        480,
+        112
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Choisit les offres à envoyer : statut \"nouveau\", score >= SEUIL, triées par deadline puis score\nconst SEUIL = 6;   // note minimale (0-10)\nconst MAX = 5;     // nombre maximum d'offres par envoi\n\nconst norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\n// chat_id : reçu en entrée quand WF4 appelle ce sous-workflow, sinon lu dans le profil\nlet chatId = '';\ntry { chatId = String($('Appelé depuis Telegram').first().json.chat_id || ''); } catch (e) {}\nif (!chatId) {\n  for (const i of $('Lire profil').all()) {\n    if (get(i.json, 'cle') === 'chat_id') chatId = get(i.json, 'valeur');\n  }\n}\nif (!chatId) {\n  throw new Error(\"Aucun chat_id dans l'onglet profil : envoie /start à ton bot Telegram.\");\n}\n\nconst offres = $input.all().map(i => i.json)\n  .filter(j => get(j, 'id') && norm(get(j, 'statut')) === 'nouveau' && Number(get(j, 'score')) >= SEUIL)\n  .map(j => ({\n    id: get(j, 'id'), titre: get(j, 'titre'), entreprise: get(j, 'entreprise'),\n    lieu: get(j, 'lieu'), pays: get(j, 'pays'), remote: get(j, 'remote'),\n    type_contrat: get(j, 'type_contrat') || 'non précisé', duree: get(j, 'duree') || 'non précisée',\n    salaire: get(j, 'salaire') || 'non précisé', deadline: get(j, 'deadline'),\n    url: get(j, 'url'), resume: get(j, 'resume'), raison: get(j, 'raison'), score: Number(get(j, 'score'))\n  }))\n  .sort((a, b) => {\n    const da = a.deadline ? new Date(a.deadline).getTime() : Infinity;\n    const db = b.deadline ? new Date(b.deadline).getTime() : Infinity;\n    return (da - db) || (b.score - a.score);\n  })\n  .slice(0, MAX);\n\n// aucune offre : un seul item pour prévenir au lieu de rester silencieux\nif (!offres.length) return [{ json: { chat_id: chatId, nb: 0, aucune: true } }];\n\nconst dateFr = d => { const x = new Date(d); return isNaN(x) ? d : x.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }); };\n\nreturn offres.map(o => {\n  const lieu = [o.lieu, o.pays].filter(Boolean).filter((v, k, arr) => arr.indexOf(v) === k).join(', ') || 'non précisé';\n  const texte =\n    '<b>' + esc(o.titre) + '</b>\\n' + esc(o.entreprise) + '\\n\\n' +\n    '⭐ <b>' + o.score + '/10</b> · ' + esc(o.type_contrat) + '\\n' +\n    '📍 ' + esc(lieu) + (o.remote === 'oui' ? ' (remote)' : '') + '\\n' +\n    '⏱ ' + esc(o.duree) + ' · 💶 ' + esc(o.salaire) + '\\n' +\n    '📅 Deadline : ' + esc(o.deadline ? dateFr(o.deadline) : 'non précisée') + '\\n\\n' +\n    esc(o.resume) +\n    (o.raison ? '\\n\\n💡 <i>' + esc(o.raison) + '</i>' : '');\n  return { json: { ...o, chat_id: chatId, texte, nb: offres.length, aucune: false, url_ok: /^https?:\\/\\//.test(o.url) ? o.url : 'https://www.google.com/search?q=' + encodeURIComponent(o.titre + ' ' + o.entreprise) } };\n});"
+      },
+      "id": "1981a96b-a146-41e7-81b0-1b28ac882993",
+      "name": "Choisir offres du jour",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.nb > 0 ? '📡 ' + $json.nb + (\" nouvelle(s) offre(s) pour toi, de la deadline la plus proche à la plus lointaine.\\nRéponds avec les boutons : ✅ Oui, ❌ Non, 🟠 À voir.\\n✍️ Pour changer tes critères, écris-moi simplement ce que tu veux (/aide pour des exemples).\") : '📡 Pas de nouvelle offre au-dessus de 6/10 pour l’instant.\\nPour en recevoir plus, élargis ta recherche : écris-moi par exemple « Ajoute l’Espagne à mes pays » ou « Je cherche aussi des CDI ».' }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7a8e79c6-aa2e-43c0-a470-6e94d2910e77",
+      "name": "Message de bienvenue",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        0
+      ],
+      "executeOnce": true,
+      "webhookId": "7d10c46d-c0c3-4e29-b182-ae4df639ce55",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.texte }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Oui",
+                    "additionalFields": {
+                      "callback_data": "=oui|{{ $json.id }}"
+                    }
+                  },
+                  {
+                    "text": "❌ Non",
+                    "additionalFields": {
+                      "callback_data": "=non|{{ $json.id }}"
+                    }
+                  },
+                  {
+                    "text": "🟠 À voir",
+                    "additionalFields": {
+                      "callback_data": "=voir|{{ $json.id }}"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔗 Voir l'offre",
+                    "additionalFields": {
+                      "url": "={{ $json.url_ok }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "5cd6e931-4c5e-421b-9b5c-2b118771f7bb",
+      "name": "Envoyer offre avec boutons",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        208
+      ],
+      "retryOnFail": true,
+      "webhookId": "f9c5fb89-f766-45da-a539-467985ebf4d7",
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1124099516,
+          "cachedResultName": "offres"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Choisir offres du jour').item.json.id }}",
+            "statut": "envoyé"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "statut",
+              "displayName": "statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d739f102-443d-4036-a1f6-3965fa200c87",
+      "name": "Marquer comme envoyée",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "chat_id"
+            },
+            {
+              "name": "origine"
+            }
+          ]
+        }
+      },
+      "id": "90721409-dd78-4d38-8e21-782283dd4fca",
+      "name": "Appelé depuis Telegram",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.aucune }}",
+              "operator": {
+                "operation": "false",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "cd7d18f4-f518-4e80-a26b-f50700d0e093",
+      "name": "Offre à envoyer ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chaque matin 8h": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil": {
+      "main": [
+        [
+          {
+            "node": "Lire offres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test manuel": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire offres": {
+      "main": [
+        [
+          {
+            "node": "Choisir offres du jour",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choisir offres du jour": {
+      "main": [
+        [
+          {
+            "node": "Message de bienvenue",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Offre à envoyer ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer offre avec boutons": {
+      "main": [
+        [
+          {
+            "node": "Marquer comme envoyée",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appelé depuis Telegram": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offre à envoyer ?": {
+      "main": [
+        [
+          {
+            "node": "Envoyer offre avec boutons",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "LOD6t9CYzdLRUZAo",
+    "timezone": "Europe/Paris"
+  },
+  "versionId": "69a96d7b-9118-4bee-82b0-bb369d185a2d",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "191c9922f339b7c49d9c2c3c9350f3a11390d7229b3477a9bd0f35b6670f9368"
+  },
+  "nodeGroups": [],
+  "id": "LvK5Mm0gsjC9M0kv",
+  "tags": []
+}
