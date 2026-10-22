@@ -1,0 +1,9 @@
+# Secrets (never commit tokens or API keys)
+.env
+.env.*
+credentials*.json
+
+# Misc
+.DS_Store
+node_modules/
+*.log
