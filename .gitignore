@@ -7,3 +7,7 @@ credentials*.json
 .DS_Store
 node_modules/
 *.log
+
+# Docker volumes (if ever mounted locally)
+postgres_data/
+n8n_data/
