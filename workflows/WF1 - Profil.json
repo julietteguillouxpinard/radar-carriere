@@ -1,0 +1,3170 @@
+{
+  "name": "WF1 - Profil",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Radar Carrière · Mon profil",
+        "formDescription": "Remplis ce formulaire une fois : le radar s'en sert pour trouver, noter et trier les offres, et pour rédiger tes lettres de motivation. Tu peux le refaire à tout moment, ton profil sera remplacé.",
+        "formFields": {
+          "values": [
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">1. Toi</h3><p style=\"margin:0;color:#666;font-size:14px\">Ces informations servent à personnaliser tes lettres de motivation.</p>"
+            },
+            {
+              "fieldLabel": "Prénom",
+              "placeholder": "Juliette",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Nom",
+              "placeholder": "Dupont",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "E-mail",
+              "fieldType": "email",
+              "placeholder": "prenom.nom@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Profil LinkedIn",
+              "placeholder": "https://www.linkedin.com/in/…"
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">2. Études</h3><p style=\"margin:0;color:#666;font-size:14px\">Ta formation actuelle ou la plus récente.</p>"
+            },
+            {
+              "fieldLabel": "Situation actuelle",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Étudiant·e"
+                  },
+                  {
+                    "option": "Étudiant·e en alternance"
+                  },
+                  {
+                    "option": "Étudiant·e en échange / césure"
+                  },
+                  {
+                    "option": "Jeune diplômé·e"
+                  },
+                  {
+                    "option": "En poste"
+                  },
+                  {
+                    "option": "En recherche d'emploi"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "École / Université",
+              "placeholder": "ESSEC, CentraleSupélec…",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Programme / Diplôme",
+              "placeholder": "Double diplôme BEng IA, Data & Management",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Niveau d'études actuel",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Bac+1"
+                  },
+                  {
+                    "option": "Bac+2"
+                  },
+                  {
+                    "option": "Bac+3 (Bachelor / Licence)"
+                  },
+                  {
+                    "option": "Bac+4"
+                  },
+                  {
+                    "option": "Bac+5 (Master / Ingénieur)"
+                  },
+                  {
+                    "option": "Doctorat"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Année de diplomation prévue",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "2026"
+                  },
+                  {
+                    "option": "2027"
+                  },
+                  {
+                    "option": "2028"
+                  },
+                  {
+                    "option": "2029"
+                  },
+                  {
+                    "option": "2030"
+                  },
+                  {
+                    "option": "2031"
+                  },
+                  {
+                    "option": "Déjà diplômé·e"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "GPA (sur 4)",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "4.0"
+                  },
+                  {
+                    "option": "3.9"
+                  },
+                  {
+                    "option": "3.8"
+                  },
+                  {
+                    "option": "3.7"
+                  },
+                  {
+                    "option": "3.6"
+                  },
+                  {
+                    "option": "3.5"
+                  },
+                  {
+                    "option": "3.4"
+                  },
+                  {
+                    "option": "3.3"
+                  },
+                  {
+                    "option": "3.2"
+                  },
+                  {
+                    "option": "3.1"
+                  },
+                  {
+                    "option": "3.0"
+                  },
+                  {
+                    "option": "2.9"
+                  },
+                  {
+                    "option": "2.8"
+                  },
+                  {
+                    "option": "2.7"
+                  },
+                  {
+                    "option": "2.6"
+                  },
+                  {
+                    "option": "2.5"
+                  },
+                  {
+                    "option": "2.4"
+                  },
+                  {
+                    "option": "2.3"
+                  },
+                  {
+                    "option": "2.2"
+                  },
+                  {
+                    "option": "2.1"
+                  },
+                  {
+                    "option": "2.0"
+                  },
+                  {
+                    "option": "Moins de 2.0"
+                  },
+                  {
+                    "option": "Je préfère ne pas indiquer"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldType": "html",
+              "html": "<p style=\"margin:0;color:#666;font-size:14px\">Ta moyenne n'est pas sur 4 ? Repère : 16/20 ≈ 3.7 · 14/20 ≈ 3.3 · 12/20 ≈ 3.0 · 10/20 ≈ 2.5</p>"
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">3. Expérience</h3>"
+            },
+            {
+              "fieldLabel": "Expérience professionnelle",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Aucune pour l'instant"
+                  },
+                  {
+                    "option": "Stages uniquement (moins de 6 mois au total)"
+                  },
+                  {
+                    "option": "Stages / alternance (6 à 12 mois au total)"
+                  },
+                  {
+                    "option": "1 à 2 ans"
+                  },
+                  {
+                    "option": "2 à 5 ans"
+                  },
+                  {
+                    "option": "Plus de 5 ans"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Expériences marquantes",
+              "fieldType": "textarea",
+              "placeholder": "Ex. : Stage chez Safran (4 mois) : évaluation de modèles de diffusion pour la planification de trajectoire…"
+            },
+            {
+              "fieldLabel": "Compétences clés",
+              "fieldType": "textarea",
+              "placeholder": "Ex. : Python, PyTorch, SQL, machine learning, gestion de projet…"
+            },
+            {
+              "fieldLabel": "Engagements associatifs / sportifs",
+              "fieldType": "textarea",
+              "placeholder": "Ex. : trésorière d'une association IA, équipe de rugby…"
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">4. Langues</h3><p style=\"margin:0;color:#666;font-size:14px\">Ajoute jusqu'à 5 langues : choisis la langue puis ton niveau.</p>"
+            },
+            {
+              "fieldLabel": "Langue n°1",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Français"
+                  },
+                  {
+                    "option": "Anglais"
+                  },
+                  {
+                    "option": "Espagnol"
+                  },
+                  {
+                    "option": "Allemand"
+                  },
+                  {
+                    "option": "Italien"
+                  },
+                  {
+                    "option": "Portugais"
+                  },
+                  {
+                    "option": "Néerlandais"
+                  },
+                  {
+                    "option": "Arabe"
+                  },
+                  {
+                    "option": "Chinois (mandarin)"
+                  },
+                  {
+                    "option": "Japonais"
+                  },
+                  {
+                    "option": "Coréen"
+                  },
+                  {
+                    "option": "Russe"
+                  },
+                  {
+                    "option": "Polonais"
+                  },
+                  {
+                    "option": "Turc"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Hébreu"
+                  },
+                  {
+                    "option": "Grec"
+                  },
+                  {
+                    "option": "Suédois"
+                  },
+                  {
+                    "option": "Norvégien"
+                  },
+                  {
+                    "option": "Danois"
+                  },
+                  {
+                    "option": "Finnois"
+                  },
+                  {
+                    "option": "Tchèque"
+                  },
+                  {
+                    "option": "Roumain"
+                  },
+                  {
+                    "option": "Hongrois"
+                  },
+                  {
+                    "option": "Ukrainien"
+                  },
+                  {
+                    "option": "Vietnamien"
+                  },
+                  {
+                    "option": "Thaï"
+                  },
+                  {
+                    "option": "Indonésien"
+                  },
+                  {
+                    "option": "Persan"
+                  },
+                  {
+                    "option": "Bengali"
+                  },
+                  {
+                    "option": "Swahili"
+                  },
+                  {
+                    "option": "Catalan"
+                  },
+                  {
+                    "option": "Langue des signes"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Niveau langue n°1",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Natif / bilingue"
+                  },
+                  {
+                    "option": "Courant (C1–C2)"
+                  },
+                  {
+                    "option": "Avancé (B2)"
+                  },
+                  {
+                    "option": "Intermédiaire (B1)"
+                  },
+                  {
+                    "option": "Notions (A1–A2)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Langue n°2",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucune —"
+                  },
+                  {
+                    "option": "Français"
+                  },
+                  {
+                    "option": "Anglais"
+                  },
+                  {
+                    "option": "Espagnol"
+                  },
+                  {
+                    "option": "Allemand"
+                  },
+                  {
+                    "option": "Italien"
+                  },
+                  {
+                    "option": "Portugais"
+                  },
+                  {
+                    "option": "Néerlandais"
+                  },
+                  {
+                    "option": "Arabe"
+                  },
+                  {
+                    "option": "Chinois (mandarin)"
+                  },
+                  {
+                    "option": "Japonais"
+                  },
+                  {
+                    "option": "Coréen"
+                  },
+                  {
+                    "option": "Russe"
+                  },
+                  {
+                    "option": "Polonais"
+                  },
+                  {
+                    "option": "Turc"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Hébreu"
+                  },
+                  {
+                    "option": "Grec"
+                  },
+                  {
+                    "option": "Suédois"
+                  },
+                  {
+                    "option": "Norvégien"
+                  },
+                  {
+                    "option": "Danois"
+                  },
+                  {
+                    "option": "Finnois"
+                  },
+                  {
+                    "option": "Tchèque"
+                  },
+                  {
+                    "option": "Roumain"
+                  },
+                  {
+                    "option": "Hongrois"
+                  },
+                  {
+                    "option": "Ukrainien"
+                  },
+                  {
+                    "option": "Vietnamien"
+                  },
+                  {
+                    "option": "Thaï"
+                  },
+                  {
+                    "option": "Indonésien"
+                  },
+                  {
+                    "option": "Persan"
+                  },
+                  {
+                    "option": "Bengali"
+                  },
+                  {
+                    "option": "Swahili"
+                  },
+                  {
+                    "option": "Catalan"
+                  },
+                  {
+                    "option": "Langue des signes"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Niveau langue n°2",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "—"
+                  },
+                  {
+                    "option": "Natif / bilingue"
+                  },
+                  {
+                    "option": "Courant (C1–C2)"
+                  },
+                  {
+                    "option": "Avancé (B2)"
+                  },
+                  {
+                    "option": "Intermédiaire (B1)"
+                  },
+                  {
+                    "option": "Notions (A1–A2)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Langue n°3",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucune —"
+                  },
+                  {
+                    "option": "Français"
+                  },
+                  {
+                    "option": "Anglais"
+                  },
+                  {
+                    "option": "Espagnol"
+                  },
+                  {
+                    "option": "Allemand"
+                  },
+                  {
+                    "option": "Italien"
+                  },
+                  {
+                    "option": "Portugais"
+                  },
+                  {
+                    "option": "Néerlandais"
+                  },
+                  {
+                    "option": "Arabe"
+                  },
+                  {
+                    "option": "Chinois (mandarin)"
+                  },
+                  {
+                    "option": "Japonais"
+                  },
+                  {
+                    "option": "Coréen"
+                  },
+                  {
+                    "option": "Russe"
+                  },
+                  {
+                    "option": "Polonais"
+                  },
+                  {
+                    "option": "Turc"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Hébreu"
+                  },
+                  {
+                    "option": "Grec"
+                  },
+                  {
+                    "option": "Suédois"
+                  },
+                  {
+                    "option": "Norvégien"
+                  },
+                  {
+                    "option": "Danois"
+                  },
+                  {
+                    "option": "Finnois"
+                  },
+                  {
+                    "option": "Tchèque"
+                  },
+                  {
+                    "option": "Roumain"
+                  },
+                  {
+                    "option": "Hongrois"
+                  },
+                  {
+                    "option": "Ukrainien"
+                  },
+                  {
+                    "option": "Vietnamien"
+                  },
+                  {
+                    "option": "Thaï"
+                  },
+                  {
+                    "option": "Indonésien"
+                  },
+                  {
+                    "option": "Persan"
+                  },
+                  {
+                    "option": "Bengali"
+                  },
+                  {
+                    "option": "Swahili"
+                  },
+                  {
+                    "option": "Catalan"
+                  },
+                  {
+                    "option": "Langue des signes"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Niveau langue n°3",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "—"
+                  },
+                  {
+                    "option": "Natif / bilingue"
+                  },
+                  {
+                    "option": "Courant (C1–C2)"
+                  },
+                  {
+                    "option": "Avancé (B2)"
+                  },
+                  {
+                    "option": "Intermédiaire (B1)"
+                  },
+                  {
+                    "option": "Notions (A1–A2)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Langue n°4",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucune —"
+                  },
+                  {
+                    "option": "Français"
+                  },
+                  {
+                    "option": "Anglais"
+                  },
+                  {
+                    "option": "Espagnol"
+                  },
+                  {
+                    "option": "Allemand"
+                  },
+                  {
+                    "option": "Italien"
+                  },
+                  {
+                    "option": "Portugais"
+                  },
+                  {
+                    "option": "Néerlandais"
+                  },
+                  {
+                    "option": "Arabe"
+                  },
+                  {
+                    "option": "Chinois (mandarin)"
+                  },
+                  {
+                    "option": "Japonais"
+                  },
+                  {
+                    "option": "Coréen"
+                  },
+                  {
+                    "option": "Russe"
+                  },
+                  {
+                    "option": "Polonais"
+                  },
+                  {
+                    "option": "Turc"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Hébreu"
+                  },
+                  {
+                    "option": "Grec"
+                  },
+                  {
+                    "option": "Suédois"
+                  },
+                  {
+                    "option": "Norvégien"
+                  },
+                  {
+                    "option": "Danois"
+                  },
+                  {
+                    "option": "Finnois"
+                  },
+                  {
+                    "option": "Tchèque"
+                  },
+                  {
+                    "option": "Roumain"
+                  },
+                  {
+                    "option": "Hongrois"
+                  },
+                  {
+                    "option": "Ukrainien"
+                  },
+                  {
+                    "option": "Vietnamien"
+                  },
+                  {
+                    "option": "Thaï"
+                  },
+                  {
+                    "option": "Indonésien"
+                  },
+                  {
+                    "option": "Persan"
+                  },
+                  {
+                    "option": "Bengali"
+                  },
+                  {
+                    "option": "Swahili"
+                  },
+                  {
+                    "option": "Catalan"
+                  },
+                  {
+                    "option": "Langue des signes"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Niveau langue n°4",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "—"
+                  },
+                  {
+                    "option": "Natif / bilingue"
+                  },
+                  {
+                    "option": "Courant (C1–C2)"
+                  },
+                  {
+                    "option": "Avancé (B2)"
+                  },
+                  {
+                    "option": "Intermédiaire (B1)"
+                  },
+                  {
+                    "option": "Notions (A1–A2)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Langue n°5",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucune —"
+                  },
+                  {
+                    "option": "Français"
+                  },
+                  {
+                    "option": "Anglais"
+                  },
+                  {
+                    "option": "Espagnol"
+                  },
+                  {
+                    "option": "Allemand"
+                  },
+                  {
+                    "option": "Italien"
+                  },
+                  {
+                    "option": "Portugais"
+                  },
+                  {
+                    "option": "Néerlandais"
+                  },
+                  {
+                    "option": "Arabe"
+                  },
+                  {
+                    "option": "Chinois (mandarin)"
+                  },
+                  {
+                    "option": "Japonais"
+                  },
+                  {
+                    "option": "Coréen"
+                  },
+                  {
+                    "option": "Russe"
+                  },
+                  {
+                    "option": "Polonais"
+                  },
+                  {
+                    "option": "Turc"
+                  },
+                  {
+                    "option": "Hindi"
+                  },
+                  {
+                    "option": "Hébreu"
+                  },
+                  {
+                    "option": "Grec"
+                  },
+                  {
+                    "option": "Suédois"
+                  },
+                  {
+                    "option": "Norvégien"
+                  },
+                  {
+                    "option": "Danois"
+                  },
+                  {
+                    "option": "Finnois"
+                  },
+                  {
+                    "option": "Tchèque"
+                  },
+                  {
+                    "option": "Roumain"
+                  },
+                  {
+                    "option": "Hongrois"
+                  },
+                  {
+                    "option": "Ukrainien"
+                  },
+                  {
+                    "option": "Vietnamien"
+                  },
+                  {
+                    "option": "Thaï"
+                  },
+                  {
+                    "option": "Indonésien"
+                  },
+                  {
+                    "option": "Persan"
+                  },
+                  {
+                    "option": "Bengali"
+                  },
+                  {
+                    "option": "Swahili"
+                  },
+                  {
+                    "option": "Catalan"
+                  },
+                  {
+                    "option": "Langue des signes"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Niveau langue n°5",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "—"
+                  },
+                  {
+                    "option": "Natif / bilingue"
+                  },
+                  {
+                    "option": "Courant (C1–C2)"
+                  },
+                  {
+                    "option": "Avancé (B2)"
+                  },
+                  {
+                    "option": "Intermédiaire (B1)"
+                  },
+                  {
+                    "option": "Notions (A1–A2)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Autre langue",
+              "placeholder": "Si absente de la liste. Ex. : Wolof – Natif"
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">5. Ce que tu cherches</h3>"
+            },
+            {
+              "fieldLabel": "Type de contrat",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Stage"
+                  },
+                  {
+                    "option": "Alternance"
+                  },
+                  {
+                    "option": "Césure / gap year"
+                  },
+                  {
+                    "option": "VIE"
+                  },
+                  {
+                    "option": "CDD"
+                  },
+                  {
+                    "option": "CDI"
+                  },
+                  {
+                    "option": "Freelance"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Domaines visés",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Data/IA"
+                  },
+                  {
+                    "option": "Software / Tech"
+                  },
+                  {
+                    "option": "Ingénierie / R&D"
+                  },
+                  {
+                    "option": "Conseil"
+                  },
+                  {
+                    "option": "Finance"
+                  },
+                  {
+                    "option": "Produit"
+                  },
+                  {
+                    "option": "Marketing"
+                  },
+                  {
+                    "option": "Supply chain / Opérations"
+                  },
+                  {
+                    "option": "Entrepreneuriat"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Autre domaine",
+              "placeholder": "Ex. : santé, énergie, spatial…"
+            },
+            {
+              "fieldLabel": "Types d'entreprise",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Startup"
+                  },
+                  {
+                    "option": "Scale-up"
+                  },
+                  {
+                    "option": "PME"
+                  },
+                  {
+                    "option": "Grand groupe"
+                  },
+                  {
+                    "option": "Cabinet de conseil"
+                  },
+                  {
+                    "option": "Banque / Fonds d'investissement"
+                  },
+                  {
+                    "option": "Institution / ONG"
+                  },
+                  {
+                    "option": "Laboratoire de recherche"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Durée souhaitée",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Moins de 3 mois"
+                  },
+                  {
+                    "option": "3 à 4 mois"
+                  },
+                  {
+                    "option": "5 à 6 mois"
+                  },
+                  {
+                    "option": "Plus de 6 mois"
+                  },
+                  {
+                    "option": "Indifférent / poste permanent"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Date de début souhaitée",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Rémunération minimale (€ brut / mois)",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Pas de minimum"
+                  },
+                  {
+                    "option": "≥ 700 € (gratification légale)"
+                  },
+                  {
+                    "option": "≥ 1 000 €"
+                  },
+                  {
+                    "option": "≥ 1 500 €"
+                  },
+                  {
+                    "option": "≥ 2 000 €"
+                  },
+                  {
+                    "option": "≥ 2 500 €"
+                  },
+                  {
+                    "option": "≥ 3 000 €"
+                  },
+                  {
+                    "option": "≥ 4 000 €"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">6. Où</h3><p style=\"margin:0;color:#666;font-size:14px\">Choisis jusqu'à 3 pays et 2 villes.</p>"
+            },
+            {
+              "fieldLabel": "Pays n°1",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "France"
+                  },
+                  {
+                    "option": "Afghanistan"
+                  },
+                  {
+                    "option": "Afrique du Sud"
+                  },
+                  {
+                    "option": "Albanie"
+                  },
+                  {
+                    "option": "Algérie"
+                  },
+                  {
+                    "option": "Allemagne"
+                  },
+                  {
+                    "option": "Andorre"
+                  },
+                  {
+                    "option": "Angola"
+                  },
+                  {
+                    "option": "Arabie saoudite"
+                  },
+                  {
+                    "option": "Argentine"
+                  },
+                  {
+                    "option": "Arménie"
+                  },
+                  {
+                    "option": "Australie"
+                  },
+                  {
+                    "option": "Autriche"
+                  },
+                  {
+                    "option": "Azerbaïdjan"
+                  },
+                  {
+                    "option": "Bahreïn"
+                  },
+                  {
+                    "option": "Bangladesh"
+                  },
+                  {
+                    "option": "Belgique"
+                  },
+                  {
+                    "option": "Bénin"
+                  },
+                  {
+                    "option": "Biélorussie"
+                  },
+                  {
+                    "option": "Bolivie"
+                  },
+                  {
+                    "option": "Bosnie-Herzégovine"
+                  },
+                  {
+                    "option": "Botswana"
+                  },
+                  {
+                    "option": "Brésil"
+                  },
+                  {
+                    "option": "Bulgarie"
+                  },
+                  {
+                    "option": "Burkina Faso"
+                  },
+                  {
+                    "option": "Cambodge"
+                  },
+                  {
+                    "option": "Cameroun"
+                  },
+                  {
+                    "option": "Canada"
+                  },
+                  {
+                    "option": "Chili"
+                  },
+                  {
+                    "option": "Chine"
+                  },
+                  {
+                    "option": "Chypre"
+                  },
+                  {
+                    "option": "Colombie"
+                  },
+                  {
+                    "option": "Corée du Sud"
+                  },
+                  {
+                    "option": "Costa Rica"
+                  },
+                  {
+                    "option": "Côte d'Ivoire"
+                  },
+                  {
+                    "option": "Croatie"
+                  },
+                  {
+                    "option": "Cuba"
+                  },
+                  {
+                    "option": "Danemark"
+                  },
+                  {
+                    "option": "Égypte"
+                  },
+                  {
+                    "option": "Émirats arabes unis"
+                  },
+                  {
+                    "option": "Équateur"
+                  },
+                  {
+                    "option": "Espagne"
+                  },
+                  {
+                    "option": "Estonie"
+                  },
+                  {
+                    "option": "États-Unis"
+                  },
+                  {
+                    "option": "Éthiopie"
+                  },
+                  {
+                    "option": "Finlande"
+                  },
+                  {
+                    "option": "Gabon"
+                  },
+                  {
+                    "option": "Géorgie"
+                  },
+                  {
+                    "option": "Ghana"
+                  },
+                  {
+                    "option": "Grèce"
+                  },
+                  {
+                    "option": "Guatemala"
+                  },
+                  {
+                    "option": "Guinée"
+                  },
+                  {
+                    "option": "Haïti"
+                  },
+                  {
+                    "option": "Honduras"
+                  },
+                  {
+                    "option": "Hong Kong"
+                  },
+                  {
+                    "option": "Hongrie"
+                  },
+                  {
+                    "option": "Inde"
+                  },
+                  {
+                    "option": "Indonésie"
+                  },
+                  {
+                    "option": "Irak"
+                  },
+                  {
+                    "option": "Iran"
+                  },
+                  {
+                    "option": "Irlande"
+                  },
+                  {
+                    "option": "Islande"
+                  },
+                  {
+                    "option": "Israël"
+                  },
+                  {
+                    "option": "Italie"
+                  },
+                  {
+                    "option": "Jamaïque"
+                  },
+                  {
+                    "option": "Japon"
+                  },
+                  {
+                    "option": "Jordanie"
+                  },
+                  {
+                    "option": "Kazakhstan"
+                  },
+                  {
+                    "option": "Kenya"
+                  },
+                  {
+                    "option": "Koweït"
+                  },
+                  {
+                    "option": "Laos"
+                  },
+                  {
+                    "option": "Lettonie"
+                  },
+                  {
+                    "option": "Liban"
+                  },
+                  {
+                    "option": "Libye"
+                  },
+                  {
+                    "option": "Liechtenstein"
+                  },
+                  {
+                    "option": "Lituanie"
+                  },
+                  {
+                    "option": "Luxembourg"
+                  },
+                  {
+                    "option": "Macédoine du Nord"
+                  },
+                  {
+                    "option": "Madagascar"
+                  },
+                  {
+                    "option": "Malaisie"
+                  },
+                  {
+                    "option": "Mali"
+                  },
+                  {
+                    "option": "Malte"
+                  },
+                  {
+                    "option": "Maroc"
+                  },
+                  {
+                    "option": "Maurice"
+                  },
+                  {
+                    "option": "Mauritanie"
+                  },
+                  {
+                    "option": "Mexique"
+                  },
+                  {
+                    "option": "Moldavie"
+                  },
+                  {
+                    "option": "Monaco"
+                  },
+                  {
+                    "option": "Mongolie"
+                  },
+                  {
+                    "option": "Monténégro"
+                  },
+                  {
+                    "option": "Mozambique"
+                  },
+                  {
+                    "option": "Namibie"
+                  },
+                  {
+                    "option": "Népal"
+                  },
+                  {
+                    "option": "Nicaragua"
+                  },
+                  {
+                    "option": "Niger"
+                  },
+                  {
+                    "option": "Nigeria"
+                  },
+                  {
+                    "option": "Norvège"
+                  },
+                  {
+                    "option": "Nouvelle-Zélande"
+                  },
+                  {
+                    "option": "Oman"
+                  },
+                  {
+                    "option": "Ouganda"
+                  },
+                  {
+                    "option": "Ouzbékistan"
+                  },
+                  {
+                    "option": "Pakistan"
+                  },
+                  {
+                    "option": "Panama"
+                  },
+                  {
+                    "option": "Paraguay"
+                  },
+                  {
+                    "option": "Pays-Bas"
+                  },
+                  {
+                    "option": "Pérou"
+                  },
+                  {
+                    "option": "Philippines"
+                  },
+                  {
+                    "option": "Pologne"
+                  },
+                  {
+                    "option": "Portugal"
+                  },
+                  {
+                    "option": "Qatar"
+                  },
+                  {
+                    "option": "République dominicaine"
+                  },
+                  {
+                    "option": "République tchèque"
+                  },
+                  {
+                    "option": "Roumanie"
+                  },
+                  {
+                    "option": "Royaume-Uni"
+                  },
+                  {
+                    "option": "Russie"
+                  },
+                  {
+                    "option": "Rwanda"
+                  },
+                  {
+                    "option": "Salvador"
+                  },
+                  {
+                    "option": "Sénégal"
+                  },
+                  {
+                    "option": "Serbie"
+                  },
+                  {
+                    "option": "Singapour"
+                  },
+                  {
+                    "option": "Slovaquie"
+                  },
+                  {
+                    "option": "Slovénie"
+                  },
+                  {
+                    "option": "Sri Lanka"
+                  },
+                  {
+                    "option": "Suède"
+                  },
+                  {
+                    "option": "Suisse"
+                  },
+                  {
+                    "option": "Taïwan"
+                  },
+                  {
+                    "option": "Tanzanie"
+                  },
+                  {
+                    "option": "Tchad"
+                  },
+                  {
+                    "option": "Thaïlande"
+                  },
+                  {
+                    "option": "Togo"
+                  },
+                  {
+                    "option": "Tunisie"
+                  },
+                  {
+                    "option": "Turquie"
+                  },
+                  {
+                    "option": "Ukraine"
+                  },
+                  {
+                    "option": "Uruguay"
+                  },
+                  {
+                    "option": "Venezuela"
+                  },
+                  {
+                    "option": "Vietnam"
+                  },
+                  {
+                    "option": "Zambie"
+                  },
+                  {
+                    "option": "Zimbabwe"
+                  },
+                  {
+                    "option": "Peu importe (monde entier)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Pays n°2",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucun —"
+                  },
+                  {
+                    "option": "France"
+                  },
+                  {
+                    "option": "Afghanistan"
+                  },
+                  {
+                    "option": "Afrique du Sud"
+                  },
+                  {
+                    "option": "Albanie"
+                  },
+                  {
+                    "option": "Algérie"
+                  },
+                  {
+                    "option": "Allemagne"
+                  },
+                  {
+                    "option": "Andorre"
+                  },
+                  {
+                    "option": "Angola"
+                  },
+                  {
+                    "option": "Arabie saoudite"
+                  },
+                  {
+                    "option": "Argentine"
+                  },
+                  {
+                    "option": "Arménie"
+                  },
+                  {
+                    "option": "Australie"
+                  },
+                  {
+                    "option": "Autriche"
+                  },
+                  {
+                    "option": "Azerbaïdjan"
+                  },
+                  {
+                    "option": "Bahreïn"
+                  },
+                  {
+                    "option": "Bangladesh"
+                  },
+                  {
+                    "option": "Belgique"
+                  },
+                  {
+                    "option": "Bénin"
+                  },
+                  {
+                    "option": "Biélorussie"
+                  },
+                  {
+                    "option": "Bolivie"
+                  },
+                  {
+                    "option": "Bosnie-Herzégovine"
+                  },
+                  {
+                    "option": "Botswana"
+                  },
+                  {
+                    "option": "Brésil"
+                  },
+                  {
+                    "option": "Bulgarie"
+                  },
+                  {
+                    "option": "Burkina Faso"
+                  },
+                  {
+                    "option": "Cambodge"
+                  },
+                  {
+                    "option": "Cameroun"
+                  },
+                  {
+                    "option": "Canada"
+                  },
+                  {
+                    "option": "Chili"
+                  },
+                  {
+                    "option": "Chine"
+                  },
+                  {
+                    "option": "Chypre"
+                  },
+                  {
+                    "option": "Colombie"
+                  },
+                  {
+                    "option": "Corée du Sud"
+                  },
+                  {
+                    "option": "Costa Rica"
+                  },
+                  {
+                    "option": "Côte d'Ivoire"
+                  },
+                  {
+                    "option": "Croatie"
+                  },
+                  {
+                    "option": "Cuba"
+                  },
+                  {
+                    "option": "Danemark"
+                  },
+                  {
+                    "option": "Égypte"
+                  },
+                  {
+                    "option": "Émirats arabes unis"
+                  },
+                  {
+                    "option": "Équateur"
+                  },
+                  {
+                    "option": "Espagne"
+                  },
+                  {
+                    "option": "Estonie"
+                  },
+                  {
+                    "option": "États-Unis"
+                  },
+                  {
+                    "option": "Éthiopie"
+                  },
+                  {
+                    "option": "Finlande"
+                  },
+                  {
+                    "option": "Gabon"
+                  },
+                  {
+                    "option": "Géorgie"
+                  },
+                  {
+                    "option": "Ghana"
+                  },
+                  {
+                    "option": "Grèce"
+                  },
+                  {
+                    "option": "Guatemala"
+                  },
+                  {
+                    "option": "Guinée"
+                  },
+                  {
+                    "option": "Haïti"
+                  },
+                  {
+                    "option": "Honduras"
+                  },
+                  {
+                    "option": "Hong Kong"
+                  },
+                  {
+                    "option": "Hongrie"
+                  },
+                  {
+                    "option": "Inde"
+                  },
+                  {
+                    "option": "Indonésie"
+                  },
+                  {
+                    "option": "Irak"
+                  },
+                  {
+                    "option": "Iran"
+                  },
+                  {
+                    "option": "Irlande"
+                  },
+                  {
+                    "option": "Islande"
+                  },
+                  {
+                    "option": "Israël"
+                  },
+                  {
+                    "option": "Italie"
+                  },
+                  {
+                    "option": "Jamaïque"
+                  },
+                  {
+                    "option": "Japon"
+                  },
+                  {
+                    "option": "Jordanie"
+                  },
+                  {
+                    "option": "Kazakhstan"
+                  },
+                  {
+                    "option": "Kenya"
+                  },
+                  {
+                    "option": "Koweït"
+                  },
+                  {
+                    "option": "Laos"
+                  },
+                  {
+                    "option": "Lettonie"
+                  },
+                  {
+                    "option": "Liban"
+                  },
+                  {
+                    "option": "Libye"
+                  },
+                  {
+                    "option": "Liechtenstein"
+                  },
+                  {
+                    "option": "Lituanie"
+                  },
+                  {
+                    "option": "Luxembourg"
+                  },
+                  {
+                    "option": "Macédoine du Nord"
+                  },
+                  {
+                    "option": "Madagascar"
+                  },
+                  {
+                    "option": "Malaisie"
+                  },
+                  {
+                    "option": "Mali"
+                  },
+                  {
+                    "option": "Malte"
+                  },
+                  {
+                    "option": "Maroc"
+                  },
+                  {
+                    "option": "Maurice"
+                  },
+                  {
+                    "option": "Mauritanie"
+                  },
+                  {
+                    "option": "Mexique"
+                  },
+                  {
+                    "option": "Moldavie"
+                  },
+                  {
+                    "option": "Monaco"
+                  },
+                  {
+                    "option": "Mongolie"
+                  },
+                  {
+                    "option": "Monténégro"
+                  },
+                  {
+                    "option": "Mozambique"
+                  },
+                  {
+                    "option": "Namibie"
+                  },
+                  {
+                    "option": "Népal"
+                  },
+                  {
+                    "option": "Nicaragua"
+                  },
+                  {
+                    "option": "Niger"
+                  },
+                  {
+                    "option": "Nigeria"
+                  },
+                  {
+                    "option": "Norvège"
+                  },
+                  {
+                    "option": "Nouvelle-Zélande"
+                  },
+                  {
+                    "option": "Oman"
+                  },
+                  {
+                    "option": "Ouganda"
+                  },
+                  {
+                    "option": "Ouzbékistan"
+                  },
+                  {
+                    "option": "Pakistan"
+                  },
+                  {
+                    "option": "Panama"
+                  },
+                  {
+                    "option": "Paraguay"
+                  },
+                  {
+                    "option": "Pays-Bas"
+                  },
+                  {
+                    "option": "Pérou"
+                  },
+                  {
+                    "option": "Philippines"
+                  },
+                  {
+                    "option": "Pologne"
+                  },
+                  {
+                    "option": "Portugal"
+                  },
+                  {
+                    "option": "Qatar"
+                  },
+                  {
+                    "option": "République dominicaine"
+                  },
+                  {
+                    "option": "République tchèque"
+                  },
+                  {
+                    "option": "Roumanie"
+                  },
+                  {
+                    "option": "Royaume-Uni"
+                  },
+                  {
+                    "option": "Russie"
+                  },
+                  {
+                    "option": "Rwanda"
+                  },
+                  {
+                    "option": "Salvador"
+                  },
+                  {
+                    "option": "Sénégal"
+                  },
+                  {
+                    "option": "Serbie"
+                  },
+                  {
+                    "option": "Singapour"
+                  },
+                  {
+                    "option": "Slovaquie"
+                  },
+                  {
+                    "option": "Slovénie"
+                  },
+                  {
+                    "option": "Sri Lanka"
+                  },
+                  {
+                    "option": "Suède"
+                  },
+                  {
+                    "option": "Suisse"
+                  },
+                  {
+                    "option": "Taïwan"
+                  },
+                  {
+                    "option": "Tanzanie"
+                  },
+                  {
+                    "option": "Tchad"
+                  },
+                  {
+                    "option": "Thaïlande"
+                  },
+                  {
+                    "option": "Togo"
+                  },
+                  {
+                    "option": "Tunisie"
+                  },
+                  {
+                    "option": "Turquie"
+                  },
+                  {
+                    "option": "Ukraine"
+                  },
+                  {
+                    "option": "Uruguay"
+                  },
+                  {
+                    "option": "Venezuela"
+                  },
+                  {
+                    "option": "Vietnam"
+                  },
+                  {
+                    "option": "Zambie"
+                  },
+                  {
+                    "option": "Zimbabwe"
+                  },
+                  {
+                    "option": "Peu importe (monde entier)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Pays n°3",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucun —"
+                  },
+                  {
+                    "option": "France"
+                  },
+                  {
+                    "option": "Afghanistan"
+                  },
+                  {
+                    "option": "Afrique du Sud"
+                  },
+                  {
+                    "option": "Albanie"
+                  },
+                  {
+                    "option": "Algérie"
+                  },
+                  {
+                    "option": "Allemagne"
+                  },
+                  {
+                    "option": "Andorre"
+                  },
+                  {
+                    "option": "Angola"
+                  },
+                  {
+                    "option": "Arabie saoudite"
+                  },
+                  {
+                    "option": "Argentine"
+                  },
+                  {
+                    "option": "Arménie"
+                  },
+                  {
+                    "option": "Australie"
+                  },
+                  {
+                    "option": "Autriche"
+                  },
+                  {
+                    "option": "Azerbaïdjan"
+                  },
+                  {
+                    "option": "Bahreïn"
+                  },
+                  {
+                    "option": "Bangladesh"
+                  },
+                  {
+                    "option": "Belgique"
+                  },
+                  {
+                    "option": "Bénin"
+                  },
+                  {
+                    "option": "Biélorussie"
+                  },
+                  {
+                    "option": "Bolivie"
+                  },
+                  {
+                    "option": "Bosnie-Herzégovine"
+                  },
+                  {
+                    "option": "Botswana"
+                  },
+                  {
+                    "option": "Brésil"
+                  },
+                  {
+                    "option": "Bulgarie"
+                  },
+                  {
+                    "option": "Burkina Faso"
+                  },
+                  {
+                    "option": "Cambodge"
+                  },
+                  {
+                    "option": "Cameroun"
+                  },
+                  {
+                    "option": "Canada"
+                  },
+                  {
+                    "option": "Chili"
+                  },
+                  {
+                    "option": "Chine"
+                  },
+                  {
+                    "option": "Chypre"
+                  },
+                  {
+                    "option": "Colombie"
+                  },
+                  {
+                    "option": "Corée du Sud"
+                  },
+                  {
+                    "option": "Costa Rica"
+                  },
+                  {
+                    "option": "Côte d'Ivoire"
+                  },
+                  {
+                    "option": "Croatie"
+                  },
+                  {
+                    "option": "Cuba"
+                  },
+                  {
+                    "option": "Danemark"
+                  },
+                  {
+                    "option": "Égypte"
+                  },
+                  {
+                    "option": "Émirats arabes unis"
+                  },
+                  {
+                    "option": "Équateur"
+                  },
+                  {
+                    "option": "Espagne"
+                  },
+                  {
+                    "option": "Estonie"
+                  },
+                  {
+                    "option": "États-Unis"
+                  },
+                  {
+                    "option": "Éthiopie"
+                  },
+                  {
+                    "option": "Finlande"
+                  },
+                  {
+                    "option": "Gabon"
+                  },
+                  {
+                    "option": "Géorgie"
+                  },
+                  {
+                    "option": "Ghana"
+                  },
+                  {
+                    "option": "Grèce"
+                  },
+                  {
+                    "option": "Guatemala"
+                  },
+                  {
+                    "option": "Guinée"
+                  },
+                  {
+                    "option": "Haïti"
+                  },
+                  {
+                    "option": "Honduras"
+                  },
+                  {
+                    "option": "Hong Kong"
+                  },
+                  {
+                    "option": "Hongrie"
+                  },
+                  {
+                    "option": "Inde"
+                  },
+                  {
+                    "option": "Indonésie"
+                  },
+                  {
+                    "option": "Irak"
+                  },
+                  {
+                    "option": "Iran"
+                  },
+                  {
+                    "option": "Irlande"
+                  },
+                  {
+                    "option": "Islande"
+                  },
+                  {
+                    "option": "Israël"
+                  },
+                  {
+                    "option": "Italie"
+                  },
+                  {
+                    "option": "Jamaïque"
+                  },
+                  {
+                    "option": "Japon"
+                  },
+                  {
+                    "option": "Jordanie"
+                  },
+                  {
+                    "option": "Kazakhstan"
+                  },
+                  {
+                    "option": "Kenya"
+                  },
+                  {
+                    "option": "Koweït"
+                  },
+                  {
+                    "option": "Laos"
+                  },
+                  {
+                    "option": "Lettonie"
+                  },
+                  {
+                    "option": "Liban"
+                  },
+                  {
+                    "option": "Libye"
+                  },
+                  {
+                    "option": "Liechtenstein"
+                  },
+                  {
+                    "option": "Lituanie"
+                  },
+                  {
+                    "option": "Luxembourg"
+                  },
+                  {
+                    "option": "Macédoine du Nord"
+                  },
+                  {
+                    "option": "Madagascar"
+                  },
+                  {
+                    "option": "Malaisie"
+                  },
+                  {
+                    "option": "Mali"
+                  },
+                  {
+                    "option": "Malte"
+                  },
+                  {
+                    "option": "Maroc"
+                  },
+                  {
+                    "option": "Maurice"
+                  },
+                  {
+                    "option": "Mauritanie"
+                  },
+                  {
+                    "option": "Mexique"
+                  },
+                  {
+                    "option": "Moldavie"
+                  },
+                  {
+                    "option": "Monaco"
+                  },
+                  {
+                    "option": "Mongolie"
+                  },
+                  {
+                    "option": "Monténégro"
+                  },
+                  {
+                    "option": "Mozambique"
+                  },
+                  {
+                    "option": "Namibie"
+                  },
+                  {
+                    "option": "Népal"
+                  },
+                  {
+                    "option": "Nicaragua"
+                  },
+                  {
+                    "option": "Niger"
+                  },
+                  {
+                    "option": "Nigeria"
+                  },
+                  {
+                    "option": "Norvège"
+                  },
+                  {
+                    "option": "Nouvelle-Zélande"
+                  },
+                  {
+                    "option": "Oman"
+                  },
+                  {
+                    "option": "Ouganda"
+                  },
+                  {
+                    "option": "Ouzbékistan"
+                  },
+                  {
+                    "option": "Pakistan"
+                  },
+                  {
+                    "option": "Panama"
+                  },
+                  {
+                    "option": "Paraguay"
+                  },
+                  {
+                    "option": "Pays-Bas"
+                  },
+                  {
+                    "option": "Pérou"
+                  },
+                  {
+                    "option": "Philippines"
+                  },
+                  {
+                    "option": "Pologne"
+                  },
+                  {
+                    "option": "Portugal"
+                  },
+                  {
+                    "option": "Qatar"
+                  },
+                  {
+                    "option": "République dominicaine"
+                  },
+                  {
+                    "option": "République tchèque"
+                  },
+                  {
+                    "option": "Roumanie"
+                  },
+                  {
+                    "option": "Royaume-Uni"
+                  },
+                  {
+                    "option": "Russie"
+                  },
+                  {
+                    "option": "Rwanda"
+                  },
+                  {
+                    "option": "Salvador"
+                  },
+                  {
+                    "option": "Sénégal"
+                  },
+                  {
+                    "option": "Serbie"
+                  },
+                  {
+                    "option": "Singapour"
+                  },
+                  {
+                    "option": "Slovaquie"
+                  },
+                  {
+                    "option": "Slovénie"
+                  },
+                  {
+                    "option": "Sri Lanka"
+                  },
+                  {
+                    "option": "Suède"
+                  },
+                  {
+                    "option": "Suisse"
+                  },
+                  {
+                    "option": "Taïwan"
+                  },
+                  {
+                    "option": "Tanzanie"
+                  },
+                  {
+                    "option": "Tchad"
+                  },
+                  {
+                    "option": "Thaïlande"
+                  },
+                  {
+                    "option": "Togo"
+                  },
+                  {
+                    "option": "Tunisie"
+                  },
+                  {
+                    "option": "Turquie"
+                  },
+                  {
+                    "option": "Ukraine"
+                  },
+                  {
+                    "option": "Uruguay"
+                  },
+                  {
+                    "option": "Venezuela"
+                  },
+                  {
+                    "option": "Vietnam"
+                  },
+                  {
+                    "option": "Zambie"
+                  },
+                  {
+                    "option": "Zimbabwe"
+                  },
+                  {
+                    "option": "Peu importe (monde entier)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Ville n°1",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Peu importe"
+                  },
+                  {
+                    "option": "Télétravail complet"
+                  },
+                  {
+                    "option": "Paris"
+                  },
+                  {
+                    "option": "Lyon"
+                  },
+                  {
+                    "option": "Marseille"
+                  },
+                  {
+                    "option": "Toulouse"
+                  },
+                  {
+                    "option": "Bordeaux"
+                  },
+                  {
+                    "option": "Lille"
+                  },
+                  {
+                    "option": "Nantes"
+                  },
+                  {
+                    "option": "Nice / Sophia Antipolis"
+                  },
+                  {
+                    "option": "Strasbourg"
+                  },
+                  {
+                    "option": "Montpellier"
+                  },
+                  {
+                    "option": "Rennes"
+                  },
+                  {
+                    "option": "Grenoble"
+                  },
+                  {
+                    "option": "Londres"
+                  },
+                  {
+                    "option": "Dublin"
+                  },
+                  {
+                    "option": "Bruxelles"
+                  },
+                  {
+                    "option": "Luxembourg"
+                  },
+                  {
+                    "option": "Amsterdam"
+                  },
+                  {
+                    "option": "Berlin"
+                  },
+                  {
+                    "option": "Munich"
+                  },
+                  {
+                    "option": "Francfort"
+                  },
+                  {
+                    "option": "Genève"
+                  },
+                  {
+                    "option": "Zurich"
+                  },
+                  {
+                    "option": "Lausanne"
+                  },
+                  {
+                    "option": "Madrid"
+                  },
+                  {
+                    "option": "Barcelone"
+                  },
+                  {
+                    "option": "Lisbonne"
+                  },
+                  {
+                    "option": "Milan"
+                  },
+                  {
+                    "option": "Rome"
+                  },
+                  {
+                    "option": "Vienne"
+                  },
+                  {
+                    "option": "Prague"
+                  },
+                  {
+                    "option": "Varsovie"
+                  },
+                  {
+                    "option": "Stockholm"
+                  },
+                  {
+                    "option": "Copenhague"
+                  },
+                  {
+                    "option": "Oslo"
+                  },
+                  {
+                    "option": "Helsinki"
+                  },
+                  {
+                    "option": "New York"
+                  },
+                  {
+                    "option": "San Francisco"
+                  },
+                  {
+                    "option": "Boston"
+                  },
+                  {
+                    "option": "Los Angeles"
+                  },
+                  {
+                    "option": "Chicago"
+                  },
+                  {
+                    "option": "Seattle"
+                  },
+                  {
+                    "option": "Austin"
+                  },
+                  {
+                    "option": "Montréal"
+                  },
+                  {
+                    "option": "Toronto"
+                  },
+                  {
+                    "option": "Vancouver"
+                  },
+                  {
+                    "option": "Mexico"
+                  },
+                  {
+                    "option": "São Paulo"
+                  },
+                  {
+                    "option": "Rio de Janeiro"
+                  },
+                  {
+                    "option": "Buenos Aires"
+                  },
+                  {
+                    "option": "Santiago"
+                  },
+                  {
+                    "option": "Bogotá"
+                  },
+                  {
+                    "option": "Lima"
+                  },
+                  {
+                    "option": "Dubaï"
+                  },
+                  {
+                    "option": "Abou Dhabi"
+                  },
+                  {
+                    "option": "Doha"
+                  },
+                  {
+                    "option": "Riyad"
+                  },
+                  {
+                    "option": "Tel Aviv"
+                  },
+                  {
+                    "option": "Casablanca"
+                  },
+                  {
+                    "option": "Le Caire"
+                  },
+                  {
+                    "option": "Lagos"
+                  },
+                  {
+                    "option": "Nairobi"
+                  },
+                  {
+                    "option": "Le Cap"
+                  },
+                  {
+                    "option": "Singapour"
+                  },
+                  {
+                    "option": "Hong Kong"
+                  },
+                  {
+                    "option": "Shanghai"
+                  },
+                  {
+                    "option": "Pékin"
+                  },
+                  {
+                    "option": "Shenzhen"
+                  },
+                  {
+                    "option": "Tokyo"
+                  },
+                  {
+                    "option": "Séoul"
+                  },
+                  {
+                    "option": "Bangalore"
+                  },
+                  {
+                    "option": "Mumbai"
+                  },
+                  {
+                    "option": "Bangkok"
+                  },
+                  {
+                    "option": "Sydney"
+                  },
+                  {
+                    "option": "Melbourne"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Ville n°2",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "— Aucun —"
+                  },
+                  {
+                    "option": "Peu importe"
+                  },
+                  {
+                    "option": "Télétravail complet"
+                  },
+                  {
+                    "option": "Paris"
+                  },
+                  {
+                    "option": "Lyon"
+                  },
+                  {
+                    "option": "Marseille"
+                  },
+                  {
+                    "option": "Toulouse"
+                  },
+                  {
+                    "option": "Bordeaux"
+                  },
+                  {
+                    "option": "Lille"
+                  },
+                  {
+                    "option": "Nantes"
+                  },
+                  {
+                    "option": "Nice / Sophia Antipolis"
+                  },
+                  {
+                    "option": "Strasbourg"
+                  },
+                  {
+                    "option": "Montpellier"
+                  },
+                  {
+                    "option": "Rennes"
+                  },
+                  {
+                    "option": "Grenoble"
+                  },
+                  {
+                    "option": "Londres"
+                  },
+                  {
+                    "option": "Dublin"
+                  },
+                  {
+                    "option": "Bruxelles"
+                  },
+                  {
+                    "option": "Luxembourg"
+                  },
+                  {
+                    "option": "Amsterdam"
+                  },
+                  {
+                    "option": "Berlin"
+                  },
+                  {
+                    "option": "Munich"
+                  },
+                  {
+                    "option": "Francfort"
+                  },
+                  {
+                    "option": "Genève"
+                  },
+                  {
+                    "option": "Zurich"
+                  },
+                  {
+                    "option": "Lausanne"
+                  },
+                  {
+                    "option": "Madrid"
+                  },
+                  {
+                    "option": "Barcelone"
+                  },
+                  {
+                    "option": "Lisbonne"
+                  },
+                  {
+                    "option": "Milan"
+                  },
+                  {
+                    "option": "Rome"
+                  },
+                  {
+                    "option": "Vienne"
+                  },
+                  {
+                    "option": "Prague"
+                  },
+                  {
+                    "option": "Varsovie"
+                  },
+                  {
+                    "option": "Stockholm"
+                  },
+                  {
+                    "option": "Copenhague"
+                  },
+                  {
+                    "option": "Oslo"
+                  },
+                  {
+                    "option": "Helsinki"
+                  },
+                  {
+                    "option": "New York"
+                  },
+                  {
+                    "option": "San Francisco"
+                  },
+                  {
+                    "option": "Boston"
+                  },
+                  {
+                    "option": "Los Angeles"
+                  },
+                  {
+                    "option": "Chicago"
+                  },
+                  {
+                    "option": "Seattle"
+                  },
+                  {
+                    "option": "Austin"
+                  },
+                  {
+                    "option": "Montréal"
+                  },
+                  {
+                    "option": "Toronto"
+                  },
+                  {
+                    "option": "Vancouver"
+                  },
+                  {
+                    "option": "Mexico"
+                  },
+                  {
+                    "option": "São Paulo"
+                  },
+                  {
+                    "option": "Rio de Janeiro"
+                  },
+                  {
+                    "option": "Buenos Aires"
+                  },
+                  {
+                    "option": "Santiago"
+                  },
+                  {
+                    "option": "Bogotá"
+                  },
+                  {
+                    "option": "Lima"
+                  },
+                  {
+                    "option": "Dubaï"
+                  },
+                  {
+                    "option": "Abou Dhabi"
+                  },
+                  {
+                    "option": "Doha"
+                  },
+                  {
+                    "option": "Riyad"
+                  },
+                  {
+                    "option": "Tel Aviv"
+                  },
+                  {
+                    "option": "Casablanca"
+                  },
+                  {
+                    "option": "Le Caire"
+                  },
+                  {
+                    "option": "Lagos"
+                  },
+                  {
+                    "option": "Nairobi"
+                  },
+                  {
+                    "option": "Le Cap"
+                  },
+                  {
+                    "option": "Singapour"
+                  },
+                  {
+                    "option": "Hong Kong"
+                  },
+                  {
+                    "option": "Shanghai"
+                  },
+                  {
+                    "option": "Pékin"
+                  },
+                  {
+                    "option": "Shenzhen"
+                  },
+                  {
+                    "option": "Tokyo"
+                  },
+                  {
+                    "option": "Séoul"
+                  },
+                  {
+                    "option": "Bangalore"
+                  },
+                  {
+                    "option": "Mumbai"
+                  },
+                  {
+                    "option": "Bangkok"
+                  },
+                  {
+                    "option": "Sydney"
+                  },
+                  {
+                    "option": "Melbourne"
+                  },
+                  {
+                    "option": "Autre (préciser ci-dessous)"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Autre ville",
+              "placeholder": "Si « Autre » ci-dessus"
+            },
+            {
+              "fieldLabel": "Télétravail",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Sur site uniquement"
+                  },
+                  {
+                    "option": "Hybride"
+                  },
+                  {
+                    "option": "Télétravail complet"
+                  },
+                  {
+                    "option": "Indifférent"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3 style=\"margin:24px 0 4px\">7. Filtres</h3>"
+            },
+            {
+              "fieldLabel": "Mots à exclure",
+              "placeholder": "Ex. : commercial, vente, comptable (séparés par des virgules)"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "buttonLabel": "Enregistrer mon profil",
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "✅ Profil enregistré ! Le radar l'utilisera dès la prochaine recherche."
+            }
+          },
+          "ignoreBots": true
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -96,
+        48
+      ],
+      "id": "5e39ea77-b744-4504-b259-025c6e4434ef",
+      "name": "On form submission",
+      "webhookId": "e63e03a4-9997-4f76-8341-7439180d6c85"
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\n\n// on garde le chat_id Telegram déjà enregistré\nlet chatId = '';\nfor (const i of $('Lire profil actuel').all()) if (get(i.json, 'cle') === 'chat_id') chatId = get(i.json, 'valeur');\n\nconst f = $('On form submission').first().json;\n\n// Langues : on regroupe les paires « Langue n°X » + « Niveau langue n°X » en une seule ligne\nconst langues = [];\nfor (let n = 1; n <= 5; n++) {\n  const l = String(f['Langue n°' + n] ?? '').trim();\n  const niv = String(f['Niveau langue n°' + n] ?? '').trim();\n  if (!l || l.startsWith('—') || l.startsWith('Autre')) continue;\n  langues.push(l + (niv && !niv.startsWith('—') ? ' (' + niv + ')' : ''));\n}\nconst autreLangue = String(f['Autre langue'] ?? '').trim();\nif (autreLangue) langues.push(autreLangue);\n\nconst ignorer = ['submittedAt', 'formMode', 'Autre langue'];\nconst lignes = [];\nfor (const [cle, v] of Object.entries(f)) {\n  if (ignorer.includes(cle) || !cle.trim()) continue;\n  if (cle.startsWith('Langue n°') || cle.startsWith('Niveau langue n°')) continue;\n  const valeur = Array.isArray(v) ? v.join(', ') : String(v ?? '').trim();\n  if (!valeur || valeur.startsWith('—')) continue;   // champs vides ou « — Aucun — »\n  lignes.push({ json: { cle: cle.trim(), valeur } });\n}\nif (langues.length) lignes.push({ json: { cle: 'Langues', valeur: langues.join(', ') } });\nlignes.push({ json: { cle: 'Profil mis à jour le', valeur: new Date().toISOString().slice(0, 10) } });\nif (chatId) lignes.push({ json: { cle: 'chat_id', valeur: chatId } });\nreturn lignes;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        48
+      ],
+      "id": "9039a696-5131-40af-a956-c6effd8f8d6f",
+      "name": "Transformer en lignes"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "mode": "list",
+          "cachedResultName": "Radar Carrière",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "profil",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit#gid=0"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "cle",
+              "id": "cle",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "valeur",
+              "id": "valeur",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "cle": "={{ $json.cle }}",
+            "valeur": "={{ $json.valeur }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        864,
+        48
+      ],
+      "id": "296fe861-e1cd-436c-a590-1089b543cb54",
+      "name": "Enregistrer profil",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "profil",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "options": {}
+      },
+      "id": "97c8b97c-4406-4cf4-872c-18dc3bc60144",
+      "name": "Lire profil actuel",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        48
+      ],
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "clear",
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "profil",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "keepFirstRow": true
+      },
+      "id": "7323f67f-5d1b-4455-93bc-450b833500eb",
+      "name": "Vider l'ancien profil",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        48
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "executeOnce": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Transformer en lignes": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Lire profil actuel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil actuel": {
+      "main": [
+        [
+          {
+            "node": "Vider l'ancien profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Vider l'ancien profil": {
+      "main": [
+        [
+          {
+            "node": "Transformer en lignes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "LOD6t9CYzdLRUZAo",
+    "timezone": "Europe/Paris"
+  },
+  "versionId": "edb3bf90-f827-4e47-a0cf-35d845d1f75c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "191c9922f339b7c49d9c2c3c9350f3a11390d7229b3477a9bd0f35b6670f9368"
+  },
+  "nodeGroups": [],
+  "id": "f4rG0tIbNW7OMadf",
+  "tags": []
+}
