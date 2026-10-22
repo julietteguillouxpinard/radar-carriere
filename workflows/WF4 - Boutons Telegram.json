@@ -1,0 +1,2604 @@
+{
+  "name": "WF4 - Boutons Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "id": "4a0c62f4-b7b3-411e-bb7a-70d74fb40f13",
+      "name": "Message ou clic Telegram",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        304
+      ],
+      "webhookId": "c91c4501-c354-412b-abfd-0135084d6b3b",
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const u = $input.first().json;\nif (u.callback_query) {\n  const cb = u.callback_query;\n  const [action, id] = String(cb.data || '').split('|');\n  return [{ json: { type: action === 'pc' ? 'clic_profil' : 'clic', action, id, query_id: cb.id,\n    chat_id: String(cb.message?.chat?.id || ''), message_id: cb.message?.message_id } }];\n}\nconst m = u.message || u.edited_message || {};\nreturn [{ json: { type: 'message', chat_id: String(m.chat?.id || ''), texte: m.text || '' } }];"
+      },
+      "id": "7f237db5-10b7-4fc5-965a-7e0188c10a19",
+      "name": "Lire la mise à jour",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "message"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "clic"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "clic_profil"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "faa66b84-f11a-4142-84f8-43bbebaa88f8",
+      "name": "Clic ou message ?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        448,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "profil"
+        },
+        "options": {}
+      },
+      "id": "a86bce40-d9e4-4a68-bdb1-0379487a8f65",
+      "name": "Lire profil (message)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        -608
+      ],
+      "alwaysOutputData": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\nconst msg = $('Lire la mise à jour').first().json;\nlet existant = '';\nconst profil = {};\nfor (const i of $input.all()) {\n  const c = get(i.json, 'cle'), v = get(i.json, 'valeur');\n  if (!c) continue;\n  if (c === 'chat_id') existant = v;\n  else if (!c.startsWith('_') && v) profil[c] = v;\n}\nconst texte = String(msg.texte || '').trim();\nconst t = norm(texte);\nlet commande;\nif (!existant) commande = 'inscription';\nelse if (existant !== msg.chat_id) commande = 'refus';\nelse if (!texte || t.startsWith('/start') || t.startsWith('/aide') || t.startsWith('/help')) commande = 'aide';\nelse if (t.startsWith('/profil')) commande = 'profil';\nelse if (t.startsWith('/liens')) commande = 'liens';\nelse if (t.startsWith('/offres')) commande = 'offres';\nelse if (t.startsWith('/avoir')) commande = 'avoir';\nelse if (t.startsWith('/stats')) commande = 'stats';\nelse if (t.startsWith('/panne')) commande = 'panne';\nelse if (t.startsWith('/')) commande = 'aide';          // commande inconnue : message d'usage\nelse commande = 'modif';\n\nconst profil_html = Object.entries(profil)\n  .filter(([k]) => k !== 'Profil mis à jour le')\n  .map(([k, v]) => '<b>' + esc(k) + '</b> : ' + esc(v.length > 160 ? v.slice(0, 160) + '…' : v))\n  .join('\\n').slice(0, 3600);\n\nreturn [{ json: { commande, chat_id: msg.chat_id, texte, profil_texte: JSON.stringify(profil), profil_html: profil_html || 'Ton profil est vide : remplis le formulaire avec /liens.' } }];"
+      },
+      "id": "0db34195-6265-4b8c-9f5e-8de60b82378e",
+      "name": "Analyser le message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        -608
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "inscription"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "refus"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "aide"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "profil"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "liens"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "offres"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "avoir"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "modif"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "stats"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.commande }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "panne"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                }
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8cdb665-fda3-4d70-b504-a9fad8cf366e",
+      "name": "Quelle commande ?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1104,
+        -608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "profil"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "cle"
+          ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "cle",
+              "id": "cle",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "valeur",
+              "id": "valeur",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "cle": "chat_id",
+            "valeur": "={{ $json.chat_id }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "7057e8a7-e418-4998-9cdb-ecbffd1c9a5f",
+      "name": "Enregistrer chat_id",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        -1120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Analyser le message').first().json.chat_id }}",
+        "text": "=✅ C'est bon, ton radar est connecté ! Tu recevras tes meilleures offres chaque matin à 8h, avec les boutons ✅ Oui / ❌ Non / 🟠 À voir.\n\n✍️ Pour modifier ton profil, écris-moi simplement ce que tu veux changer. Tape /aide pour voir tout ce que je sais faire.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "2ba816d8-bf0a-446e-8efe-a717cdacb4d7",
+      "name": "Confirmer la connexion",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        -1120
+      ],
+      "webhookId": "c8bfa00e-b2c7-446d-88d9-c03a1baaf6a8",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🔒 Ce bot est privé.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "bf7bc6d8-8d9e-4d21-9412-21a872c1e5cf",
+      "name": "Bot privé",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -976
+      ],
+      "webhookId": "1d88fa1c-422b-416c-904a-ed7b83bcb7ae",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🤖 Ce que je sais faire\n\n✍️ Modifier ton profil : écris-moi simplement, par exemple\n• Ajoute Lisbonne à mes villes\n• Je cherche aussi des CDI\n• Enlève Finance de mes domaines\n• Mon GPA est 3.7\nJe te montre le changement et tu confirmes.\n\n/offres – recevoir les meilleures offres maintenant\n/avoir – tes offres mises de côté (en orange)\n/stats – le bilan de tes décisions\n/profil – voir ton profil actuel\n/liens – formulaire, tableau, brouillons, page Radar\n/aide – ce message\n\nChaque matin à 8h, je t’envoie les nouvelles offres avec ✅ Oui / ❌ Non / 🟠 À voir.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a885cec1-6578-4c06-a546-639f6117bc99",
+      "name": "Envoyer l'aide",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -848
+      ],
+      "webhookId": "b3635a4a-c2bb-4020-87f0-386a0ea39760",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "=👤 <b>Ton profil</b>\n\n{{ $json.profil_html }}\n\n✍️ Pour modifier, écris-moi simplement ce que tu veux changer.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "e1b4a84b-edca-49ae-bb4e-cee110d07e30",
+      "name": "Envoyer le profil",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -704
+      ],
+      "webhookId": "0704f34b-4fd8-4193-a1bc-a049620479ef",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🔗 Tes raccourcis",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📝 Refaire mon profil (formulaire)",
+                    "additionalFields": {
+                      "url": "https://juliettegxpinard.app.n8n.cloud/form/e63e03a4-9997-4f76-8341-7439180d6c85"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📊 Mes offres (tableau)",
+                    "additionalFields": {
+                      "url": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📬 Mes candidatures (brouillons)",
+                    "additionalFields": {
+                      "url": "https://mail.google.com/mail/u/0/#drafts"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "📡 Page Radar Carrière",
+                    "additionalFields": {
+                      "url": "https://claude.ai/artifact/W8ppuMtCRHLQhE4KoixgYw"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f0066024-e289-49e7-9372-3ae132420baf",
+      "name": "Envoyer les liens",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -560
+      ],
+      "webhookId": "d5a42ac9-6617-4bed-ab5d-ed769aa16bb7",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🔎 Je regarde tes meilleures offres…",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "fdf26962-24da-476f-9d10-2dc68ba4cb14",
+      "name": "Prévenir : recherche",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -416
+      ],
+      "webhookId": "957a068e-d816-41d9-9c88-7e01de1a4021",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "cachedResultName": "WF3 - Digest Telegram",
+          "mode": "id",
+          "value": "LvK5Mm0gsjC9M0kv"
+        },
+        "workflowInputs": {
+          "attemptToConvertTypes": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "chat_id",
+              "id": "chat_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "origine",
+              "id": "origine",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "chat_id": "={{ $('Analyser le message').first().json.chat_id }}",
+            "origine": "telegram"
+          }
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "id": "eeb18074-7cd4-4bca-9ed0-cb80ad682633",
+      "name": "Lancer le digest",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        -416
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "offres",
+          "mode": "list",
+          "value": 1124099516
+        },
+        "options": {}
+      },
+      "id": "d04112bc-408a-42ea-b8bb-715b6969c857",
+      "name": "Lire offres à voir",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1344,
+        -288
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\nconst a = $('Analyser le message').first().json;\nconst offres = $input.all().map(i => i.json).filter(j => get(j, 'id') && norm(get(j, 'statut')) === 'a voir');\nlet texte;\nif (!offres.length) texte = \"🟠 Aucune offre mise de côté pour l’instant. Clique sur « 🟠 À voir » sous une offre pour la garder ici.\";\nelse texte = '🟠 <b>Tes offres à voir (' + offres.length + ')</b>\\n\\n' + offres.slice(0, 15).map(o =>\n  '• <a href=\"' + esc(get(o, 'url')) + '\">' + esc(get(o, 'titre')) + '</a> — ' + esc(get(o, 'entreprise')) +\n  (get(o, 'deadline') ? ' (deadline ' + esc(get(o, 'deadline')) + ')' : '')).join('\\n');\nreturn [{ json: { chat_id: a.chat_id, texte } }];"
+      },
+      "id": "e451a985-e677-41f4-8ff5-1f3d759f5b40",
+      "name": "Lister les offres à voir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -288
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "f9a12e68-2d86-42e7-8eec-e7dd5635658a",
+      "name": "Envoyer les offres à voir",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        -288
+      ],
+      "webhookId": "6f5369a1-87e9-46d4-affc-3ee6bee506c1",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu mets à jour le profil de recherche de stage ou d'emploi d'une personne, à partir de son message.\n\nProfil actuel (JSON clé → valeur) :\n{{ $json.profil_texte }}\n\nMessage : {{ JSON.stringify($json.texte) }}\n\nRègles :\n- Utilise de préférence les clés existantes, écrites exactement pareil. Tu peux créer une clé si aucune ne convient.\n- Pour un champ qui contient une liste (valeurs séparées par des virgules), renvoie la liste complète mise à jour.\n- Pour ajouter un pays ou une ville, utilise un emplacement libre (Pays n°2, Pays n°3, Ville n°2) ; s'il n'y en a plus, ajoute-le dans « Autres pays » ou « Autre ville », en liste.\n- Pour supprimer une information, renvoie une valeur vide \"\".\n- Le GPA est sur 4 (maximum 4.0).\n- Si le message n'est pas une demande de modification du profil, réponds {\"comprise\": false}.\n\nRéponds UNIQUEMENT avec un JSON valide, sans texte autour :\n{\"comprise\": true, \"changements\": [{\"cle\": \"<clé>\", \"valeur\": \"<nouvelle valeur complète>\"}], \"resume\": \"<une phrase courte en français>\"}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Tu es l'assistant d'un radar d'offres de stage. Tu transformes une demande en langage naturel en modifications précises d'un profil clé-valeur. Tu ne modifies que ce qui est demandé. Tu réponds toujours et uniquement avec du JSON valide, sans texte autour."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "b6cf3f54-3a8c-46d4-9ef3-d3bbdb0f5a2e",
+      "name": "Comprendre la modification",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1344,
+        -144
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "236b6b1a-e4e0-4bd4-acf6-be9e3993f280",
+      "name": "Gemini (profil)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        64
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cICgLVvUm6bhDC1h",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst a = $('Analyser le message').first().json;\nconst profil = JSON.parse(a.profil_texte || '{}');\nconst brut = String($input.first().json.text || '');\nlet r = {};\ntry {\n  const p = brut.replace(/```json|```/g, '').trim();\n  r = JSON.parse(p.slice(p.indexOf('{'), p.lastIndexOf('}') + 1));\n} catch (e) {}\nconst ch = (Array.isArray(r.changements) ? r.changements : [])\n  .filter(c => c && c.cle && !String(c.cle).startsWith('_') && c.cle !== 'chat_id')\n  .map(c => ({ cle: String(c.cle).trim(), valeur: String(c.valeur ?? '').trim() }))\n  .slice(0, 8);\nconst comprise = !!r.comprise && ch.length > 0;\nconst details = ch.map(c => '• <b>' + esc(c.cle) + '</b> : ' + esc(profil[c.cle] || '(vide)') + ' → ' + esc(c.valeur || '(vide)')).join('\\n');\nreturn [{ json: {\n  comprise, chat_id: a.chat_id,\n  en_attente: JSON.stringify({ changements: ch }),\n  message: '✍️ ' + esc(r.resume || 'Voici ce que je vais changer :') + '\\n\\n' + details + '\\n\\nJe confirme ?'\n} }];"
+      },
+      "id": "93bcac91-f916-45df-b440-a202c34ecfef",
+      "name": "Préparer la confirmation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1648,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.comprise }}",
+              "operator": {
+                "operation": "true",
+                "singleValue": true,
+                "type": "boolean"
+              }
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "eb39be05-53dc-4a99-ae92-7b493fe8c50e",
+      "name": "Modification comprise ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        -144
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "profil",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "cle"
+          ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "cle",
+              "id": "cle",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "valeur",
+              "id": "valeur",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "cle": "_modif_en_attente",
+            "valeur": "={{ $json.en_attente }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "8c2b0e6f-e8d3-4376-93d7-3419cc9855ed",
+      "name": "Mémoriser la modification",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2080,
+        -224
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Préparer la confirmation').first().json.chat_id }}",
+        "text": "={{ $('Préparer la confirmation').first().json.message }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Confirmer",
+                    "additionalFields": {
+                      "callback_data": "pc|ok"
+                    }
+                  },
+                  {
+                    "text": "❌ Annuler",
+                    "additionalFields": {
+                      "callback_data": "pc|no"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "5adbf0f1-facb-410d-9e40-652c6c176642",
+      "name": "Demander confirmation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2304,
+        -224
+      ],
+      "webhookId": "0cb4f9b0-fad4-402f-9f6f-46bfcbe3f022",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🤔 Je n’ai pas compris ce que tu veux changer dans ton profil.\n\nExemples :\n• Ajoute Lisbonne à mes villes\n• Je cherche aussi des CDI\n• Enlève Finance de mes domaines\n\nTape /aide pour voir toutes les commandes.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "c2b2e02f-3194-4773-92d6-0eaf8fa253e8",
+      "name": "Pas compris",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2080,
+        -64
+      ],
+      "webhookId": "8fe13689-8d08-450d-8ee6-5f8bb08157b9",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.query_id }}",
+        "additionalFields": {
+          "text": "={{ { oui: '✅ Je prépare ta candidature…', non: '❌ Offre retirée', voir: '🟠 Mise de côté (en orange dans le Sheet)' }[$json.action] || 'OK' }}"
+        }
+      },
+      "id": "93829e1a-73a4-4b62-bda7-2d15ecdc91da",
+      "name": "Répondre au clic",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        400
+      ],
+      "webhookId": "1f803f6c-5e3d-4ba6-8937-6ffa128074b8",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1124099516,
+          "cachedResultName": "offres"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "id",
+              "lookupValue": "={{ $('Lire la mise à jour').first().json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "id": "18ace716-1724-41de-82b9-71b73a87a59a",
+      "name": "Trouver l'offre",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        400
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst clic = $('Lire la mise à jour').first().json;\nconst row = $input.first()?.json || {};\nif (!get(row, 'id')) throw new Error(\"Offre \" + clic.id + \" introuvable dans l'onglet offres.\");\nconst conf = {\n  oui:  { statut: 'candidature en préparation', rgb: { red: 0.72, green: 0.88, blue: 0.72 } }, // vert\n  non:  { statut: 'rejeté',                     rgb: { red: 0.85, green: 0.85, blue: 0.85 } }, // gris\n  voir: { statut: 'à voir',                     rgb: { red: 1,    green: 0.75, blue: 0.4  } }  // orange\n}[clic.action];\nif (!conf) throw new Error('Bouton inconnu : ' + clic.action);\nconst r = Number(row.row_number);\nconst corps = { requests: [{ repeatCell: {\n  range: { sheetId: 1124099516, startRowIndex: r - 1, endRowIndex: r, startColumnIndex: 0, endColumnIndex: 19 },\n  cell: { userEnteredFormat: { backgroundColor: conf.rgb } },\n  fields: 'userEnteredFormat.backgroundColor'\n} }] };\nreturn [{ json: {\n  ...clic, statut: conf.statut, row_number: r, corps,\n  titre: get(row, 'titre'), entreprise: get(row, 'entreprise'), lieu: get(row, 'lieu'), pays: get(row, 'pays'),\n  type_contrat: get(row, 'type_contrat'), duree: get(row, 'duree'), salaire: get(row, 'salaire'),\n  url: get(row, 'url'), description: get(row, 'description')\n} }];"
+      },
+      "id": "a6977c2c-7812-43e2-bb56-aaec04e1320b",
+      "name": "Préparer la décision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://sheets.googleapis.com/v4/spreadsheets/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0:batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.corps) }}",
+        "options": {}
+      },
+      "id": "8040aaa5-daf5-42da-b74b-c9fa32c9e12c",
+      "name": "Colorer la ligne",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1124099516,
+          "cachedResultName": "offres"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Préparer la décision').first().json.id }}",
+            "statut": "={{ $('Préparer la décision').first().json.statut }}",
+            "date_decision": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "statut",
+              "displayName": "statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date_decision",
+              "displayName": "date_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dea279c6-d8d8-4fbe-b4d4-35863e2dbae3",
+      "name": "Mettre à jour le statut",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1552,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Préparer la décision').first().json.action }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "oui"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Préparer la décision').first().json.action }}",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "rightValue": "non"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3cedffa4-f2c3-41ad-b171-3b1aa3070573",
+      "name": "Quelle réponse ?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1760,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cv",
+              "name": "cv_drive_file_id",
+              "value": "COLLE_ICI_L_ID_DE_TON_CV",
+              "type": "string"
+            },
+            {
+              "id": "lettre",
+              "name": "lettre_modele",
+              "value": "COLLE_ICI_TA_LETTRE_MODELE",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "19851e5f-30f9-4950-89ac-5944c5a44665",
+      "name": "Ma candidature (à compléter)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1984,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "profil"
+        },
+        "options": {}
+      },
+      "id": "1f3f53c6-07f0-48ab-955a-996916ce636f",
+      "name": "Lire profil (candidature)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2208,
+        304
+      ],
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst p = {};\nfor (const i of $input.all()) {\n  const c = get(i.json, 'cle'), v = get(i.json, 'valeur');\n  if (c && c !== 'chat_id' && !c.startsWith('_') && v) p[c] = v;\n}\nconst d = $('Préparer la décision').first().json;\nconst conf = $('Ma candidature (à compléter)').first().json;\nconst modele = String(conf.lettre_modele || '');\nreturn [{ json: {\n  profil_texte: JSON.stringify(p),\n  offre_texte: JSON.stringify({ titre: d.titre, entreprise: d.entreprise, lieu: d.lieu, contrat: d.type_contrat, duree: d.duree, description: d.description }),\n  lettre_modele: modele.startsWith('COLLE_ICI') ? '(pas de modèle fourni : rédige une lettre classique et sobre)' : modele,\n  cv_id: String(conf.cv_drive_file_id || ''),\n  cv_configure: !!conf.cv_drive_file_id && !String(conf.cv_drive_file_id).startsWith('COLLE_ICI')\n} }];"
+      },
+      "id": "8fabb25a-0ca2-463c-ae77-cb465f409405",
+      "name": "Profil + offre",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2432,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu rédiges une lettre de motivation en français, adaptée à une offre précise.\n\nProfil du candidat (JSON) :\n{{ $json.profil_texte }}\n\nOffre (JSON) :\n{{ $json.offre_texte }}\n\nLettre modèle à adapter :\n{{ $json.lettre_modele }}\n\nRègles : garde le ton et la structure du modèle ; utilise uniquement les informations du profil, du modèle et de l'offre ; n'invente aucune expérience, aucun chiffre ; 250 mots maximum ; signe avec le prénom du candidat.\nRéponds uniquement avec le texte de la lettre, sans titre ni commentaire.",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Tu es un expert en candidatures de stage. Tu rédiges des lettres de motivation sobres, précises et personnalisées en français. Tu n'inventes jamais d'expérience, de compétence ou de chiffre absents du profil, du modèle ou de l'offre. Tu réponds uniquement avec le texte de la lettre."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "e0cb8661-8d80-4943-853a-219b2df035b8",
+      "name": "Rédiger la lettre",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2640,
+        304
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "e17a2210-4a2d-4f96-83df-eb975985c4df",
+      "name": "Google Gemini",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        528
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cICgLVvUm6bhDC1h",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst lettre = String($input.first().json.text || '').replace(/```/g, '').trim();\nconst d = $('Préparer la décision').first().json;\nconst p = $('Profil + offre').first().json;\nconst message_tg =\n  '📝 <b>Ta lettre pour « ' + esc(d.titre) + ' »</b>\\n' + esc(d.entreprise) + '\\n\\n' +\n  esc(lettre).slice(0, 3400) +\n  '\\n\\n✍️ Relis-la et ajuste-la si besoin, puis postule avec le lien de l’offre :\\n🔗 ' + esc(d.url);\nreturn [{ json: {\n  lettre, lettre_html: esc(lettre).replace(/\\n/g, '<br>'),\n  objet: 'Candidature – ' + d.titre + ' – ' + d.entreprise,\n  message_tg, cv_id: p.cv_id, cv_configure: p.cv_configure,\n  chat_id: d.chat_id, id: d.id, url: d.url\n} }];"
+      },
+      "id": "f10d3c1c-095f-4db9-a971-124cb03fd12c",
+      "name": "Lettre prête",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.message_tg }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "c257e9ba-b93d-496b-b861-a4091ea5b3b7",
+      "name": "Envoyer la lettre sur Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3088,
+        304
+      ],
+      "webhookId": "7b5f745f-dc1c-47a9-a3af-fd0c18ae2af0",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $('Lettre prête').first().json.cv_configure }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2e34d6c8-974c-4d5e-a66d-0d9fbaa67421",
+      "name": "CV configuré ?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3312,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Lettre prête').first().json.cv_id }}"
+        },
+        "options": {
+          "binaryPropertyName": "data"
+        }
+      },
+      "id": "3d957d30-ae6d-4fe4-8a93-317fd43a92a5",
+      "name": "Télécharger le CV",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3520,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $('Lettre prête').first().json.objet }}",
+        "emailType": "html",
+        "message": "={{ $('Lettre prête').first().json.lettre_html }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "data"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ec298563-3d90-4b91-a493-599556d7697c",
+      "name": "Créer le brouillon Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3744,
+        208
+      ],
+      "retryOnFail": true,
+      "webhookId": "220e4d0a-c465-4783-8d72-faf4e9de1bb1",
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": 1124099516,
+          "cachedResultName": "offres"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Lettre prête').first().json.id }}",
+            "statut": "brouillon prêt"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "statut",
+              "displayName": "statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2c611304-4e5e-4a96-aba3-7699372c84cd",
+      "name": "Statut : brouillon prêt",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3968,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Lettre prête').first().json.chat_id }}",
+        "text": "=📬 Brouillon Gmail prêt avec ta lettre et ton CV en pièce jointe. Relis-le, ajoute l'adresse du recruteur et envoie : https://mail.google.com/mail/u/0/#drafts",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "a79d0bca-461d-435b-806d-99462392a6c9",
+      "name": "Prévenir : brouillon prêt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4192,
+        208
+      ],
+      "webhookId": "3a3d79c7-987c-4a72-840a-ebb7e03fd9ce",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Lettre prête').first().json.chat_id }}",
+        "text": "=⚙️ Pour que je crée aussi le brouillon Gmail avec ton CV, colle l'ID de ton CV Google Drive dans le nœud « Ma candidature (à compléter) » du workflow WF4.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "eb4e2ae6-92b7-4db3-8d86-86650b0c4657",
+      "name": "Prévenir : CV à configurer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3520,
+        400
+      ],
+      "webhookId": "42f03bb0-e55f-4d0f-b447-ed6b53a30b4c",
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('Préparer la décision').first().json.chat_id }}",
+        "messageId": "={{ $('Préparer la décision').first().json.message_id }}"
+      },
+      "id": "22ca9c48-5329-4bcf-9ee8-138bff3f006c",
+      "name": "Retirer le message Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1984,
+        560
+      ],
+      "webhookId": "accc3227-5bd7-4e01-a55f-1829e21a3d1b",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.query_id }}",
+        "additionalFields": {
+          "text": "={{ $json.id === 'ok' ? '✅ C’est noté' : '↩️ Annulé' }}"
+        }
+      },
+      "id": "f5a7b803-4e6f-42e1-ad5c-1ea8ec6a8ab9",
+      "name": "Répondre (profil)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        912
+      ],
+      "webhookId": "70c8a8e2-0331-42e6-971b-6066571cdacf",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "profil",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "options": {}
+      },
+      "id": "52f39d6d-19d7-46a2-8d30-f8dcf58bdfd6",
+      "name": "Lire profil (confirmation)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        880,
+        912
+      ],
+      "retryOnFail": true,
+      "alwaysOutputData": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nconst clic = $('Lire la mise à jour').first().json;\nlet attente = '';\nfor (const i of $input.all()) if (get(i.json, 'cle') === '_modif_en_attente') attente = get(i.json, 'valeur');\nlet changements = [];\ntry { changements = JSON.parse(attente).changements || []; } catch (e) {}\n\n// on vide toujours la modification en attente\nconst lignes = [{ cle: '_modif_en_attente', valeur: '' }];\nlet texte;\nif (clic.id === 'ok' && changements.length) {\n  for (const c of changements) lignes.push({ cle: String(c.cle), valeur: String(c.valeur ?? '') });\n  texte = '✅ Profil mis à jour :\\n' + changements.map(c => '• ' + c.cle + ' : ' + (c.valeur || '(vide)')).join('\\n') +\n    '\\n\\nLe radar en tiendra compte dès la prochaine recherche (cette nuit à 3h).';\n} else if (clic.id === 'ok') {\n  texte = '⚠️ Cette modification n’est plus disponible. Réécris-moi ce que tu veux changer.';\n} else {\n  texte = '↩️ Modification annulée, ton profil n’a pas changé.';\n}\nreturn lignes.map(l => ({ json: { ...l, chat_id: clic.chat_id, texte } }));"
+      },
+      "id": "7ba77231-1b9d-4650-985c-417310132918",
+      "name": "Appliquer la modification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "cachedResultName": "Radar Carrière",
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0"
+        },
+        "sheetName": {
+          "__rl": true,
+          "cachedResultName": "profil",
+          "mode": "list",
+          "value": "gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "cle"
+          ],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "cle",
+              "id": "cle",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "valeur",
+              "id": "valeur",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "cle": "={{ $json.cle }}",
+            "valeur": "={{ $json.valeur }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "0eb27b60-39ae-4065-ac01-3af94025defd",
+      "name": "Mettre à jour le profil",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1328,
+        912
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Appliquer la modification').first().json.chat_id }}",
+        "text": "={{ $('Appliquer la modification').first().json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "eead3e4c-6309-4485-a0b4-d9f03edb36f9",
+      "name": "Confirmer la modification",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        912
+      ],
+      "executeOnce": true,
+      "webhookId": "0126e39c-0e3a-46b0-b4d3-c807ea54c5a6",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "decisions",
+          "mode": "id",
+          "value": "srEMX4aKy078UUvM"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "offre_id",
+              "id": "offre_id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "titre",
+              "id": "titre",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "entreprise",
+              "id": "entreprise",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "decision",
+              "id": "decision",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "score",
+              "id": "score",
+              "required": false,
+              "type": "number"
+            }
+          ],
+          "value": {
+            "decision": "={{ $('Préparer la décision').first().json.action }}",
+            "entreprise": "={{ $('Préparer la décision').first().json.entreprise }}",
+            "offre_id": "={{ $('Préparer la décision').first().json.id }}",
+            "score": "={{ Number($(\"Trouver l'offre\").first().json.score) || 0 }}",
+            "titre": "={{ $('Préparer la décision').first().json.titre }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "4a537f04-e296-43ee-a39d-36b223ba7973",
+      "name": "Journaliser la décision",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1664,
+        560
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "cachedResultName": "decisions",
+          "mode": "id",
+          "value": "srEMX4aKy078UUvM"
+        },
+        "returnAll": true,
+        "orderBy": true
+      },
+      "id": "d8768e0e-81ff-4b2d-93c3-2cdebb41ea45",
+      "name": "Lire les décisions",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        -1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst a = $('Analyser le message').first().json;\nconst icone = { oui: '✅', voir: '🟠', non: '❌' };\nconst rows = $input.all().map(i => i.json)\n  .filter(r => r && icone[r.decision] && !String(r.offre_id || '').startsWith('TEST'));\nconst n = d => rows.filter(r => r.decision === d).length;\nlet texte = '📊 <b>Bilan de tes décisions</b>\\n\\n' +\n  '✅ Candidatures : ' + n('oui') + '\\n' +\n  '🟠 À voir : ' + n('voir') + '\\n' +\n  '❌ Refusées : ' + n('non') + '\\n\\n' +\n  'Total : ' + rows.length + ' décision(s) enregistrée(s).';\nif (rows.length) texte += '\\n\\n<b>Dernières :</b>\\n' + rows.slice(0, 3).map(r => icone[r.decision] + ' ' + esc(r.titre) + ' — ' + esc(r.entreprise)).join('\\n');\nreturn [{ json: { chat_id: a.chat_id, texte } }];"
+      },
+      "id": "d5816e5b-808a-432b-8c33-a4acfc0edaaf",
+      "name": "Résumer les décisions",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        -1408
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "53385ff2-7dc2-4a40-af94-1ae0c01f6cd7",
+      "name": "Envoyer le bilan",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        -1408
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "7d77dbfb-b735-475b-ba09-1ff253b3f8c8",
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "🧪 Test d’erreur : j’appelle une API qui n’existe pas. Après les réessais, l’alerte du workflow d’erreur doit arriver ici.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e384211e-c5e9-415d-a026-6cf12aeb2a6f",
+      "name": "Annoncer la panne",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -1536
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "webhookId": "256370a9-f8e2-4596-8828-130247a7d79f",
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.radar-carriere.invalid/offres",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      "id": "5b7d0041-9172-499e-8aa2-2981b135770a",
+      "name": "Appel API en panne",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1568,
+        -1536
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1000,
+      "notes": "URL volontairement invalide pour démontrer les réessais et le workflow d'erreur (WF5)."
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Message ou clic Telegram": {
+      "main": [
+        [
+          {
+            "node": "Lire la mise à jour",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire la mise à jour": {
+      "main": [
+        [
+          {
+            "node": "Clic ou message ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clic ou message ?": {
+      "main": [
+        [
+          {
+            "node": "Lire profil (message)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre au clic",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Répondre (profil)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil (message)": {
+      "main": [
+        [
+          {
+            "node": "Analyser le message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyser le message": {
+      "main": [
+        [
+          {
+            "node": "Quelle commande ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quelle commande ?": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer chat_id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bot privé",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer l'aide",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer le profil",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Envoyer les liens",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prévenir : recherche",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lire offres à voir",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Comprendre la modification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Lire les décisions",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Annoncer la panne",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enregistrer chat_id": {
+      "main": [
+        [
+          {
+            "node": "Confirmer la connexion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prévenir : recherche": {
+      "main": [
+        [
+          {
+            "node": "Lancer le digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire offres à voir": {
+      "main": [
+        [
+          {
+            "node": "Lister les offres à voir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lister les offres à voir": {
+      "main": [
+        [
+          {
+            "node": "Envoyer les offres à voir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comprendre la modification": {
+      "main": [
+        [
+          {
+            "node": "Préparer la confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini (profil)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Comprendre la modification",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la confirmation": {
+      "main": [
+        [
+          {
+            "node": "Modification comprise ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modification comprise ?": {
+      "main": [
+        [
+          {
+            "node": "Mémoriser la modification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Pas compris",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mémoriser la modification": {
+      "main": [
+        [
+          {
+            "node": "Demander confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre au clic": {
+      "main": [
+        [
+          {
+            "node": "Trouver l'offre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trouver l'offre": {
+      "main": [
+        [
+          {
+            "node": "Préparer la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer la décision": {
+      "main": [
+        [
+          {
+            "node": "Colorer la ligne",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Colorer la ligne": {
+      "main": [
+        [
+          {
+            "node": "Mettre à jour le statut",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quelle réponse ?": {
+      "main": [
+        [
+          {
+            "node": "Ma candidature (à compléter)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retirer le message Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ma candidature (à compléter)": {
+      "main": [
+        [
+          {
+            "node": "Lire profil (candidature)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil (candidature)": {
+      "main": [
+        [
+          {
+            "node": "Profil + offre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Profil + offre": {
+      "main": [
+        [
+          {
+            "node": "Rédiger la lettre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rédiger la lettre": {
+      "main": [
+        [
+          {
+            "node": "Lettre prête",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Rédiger la lettre",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lettre prête": {
+      "main": [
+        [
+          {
+            "node": "Envoyer la lettre sur Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envoyer la lettre sur Telegram": {
+      "main": [
+        [
+          {
+            "node": "CV configuré ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CV configuré ?": {
+      "main": [
+        [
+          {
+            "node": "Télécharger le CV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prévenir : CV à configurer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Télécharger le CV": {
+      "main": [
+        [
+          {
+            "node": "Créer le brouillon Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Créer le brouillon Gmail": {
+      "main": [
+        [
+          {
+            "node": "Statut : brouillon prêt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Statut : brouillon prêt": {
+      "main": [
+        [
+          {
+            "node": "Prévenir : brouillon prêt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Répondre (profil)": {
+      "main": [
+        [
+          {
+            "node": "Lire profil (confirmation)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil (confirmation)": {
+      "main": [
+        [
+          {
+            "node": "Appliquer la modification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appliquer la modification": {
+      "main": [
+        [
+          {
+            "node": "Mettre à jour le profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mettre à jour le profil": {
+      "main": [
+        [
+          {
+            "node": "Confirmer la modification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mettre à jour le statut": {
+      "main": [
+        [
+          {
+            "node": "Journaliser la décision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Journaliser la décision": {
+      "main": [
+        [
+          {
+            "node": "Quelle réponse ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire les décisions": {
+      "main": [
+        [
+          {
+            "node": "Résumer les décisions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Résumer les décisions": {
+      "main": [
+        [
+          {
+            "node": "Envoyer le bilan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Annoncer la panne": {
+      "main": [
+        [
+          {
+            "node": "Appel API en panne",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "LOD6t9CYzdLRUZAo",
+    "timezone": "Europe/Paris"
+  },
+  "versionId": "27d97ded-bbc6-4e10-8f8f-9cc58fe924df",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "191c9922f339b7c49d9c2c3c9350f3a11390d7229b3477a9bd0f35b6670f9368"
+  },
+  "nodeGroups": [],
+  "id": "2b0Cq9yTSkmTkZz4",
+  "tags": []
+}
