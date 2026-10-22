@@ -65,6 +65,27 @@ Send `/start` to the bot: it stores your `chat_id` and replies “✅ C'est bon,
 
 ---
 
+## Self-hosting with Docker
+
+`docker-compose.yml` runs n8n with PostgreSQL as its database.
+
+    cp .env.example .env   # set POSTGRES_PASSWORD and N8N_ENCRYPTION_KEY
+    docker compose up -d
+    docker compose ps      # postgres: healthy, n8n: running
+
+Then open http://localhost:5678 and import the workflows:
+
+    docker compose exec n8n n8n import:workflow --separate --input=/workflows
+
+- **Pinned versions**: `postgres:16.4-alpine` and `n8nio/n8n:2.43.8` (same version as the demo, never `latest`).
+- **Named volumes** `postgres_data` and `n8n_data`: workflows and credentials survive `docker compose down` then `up`.
+- **Healthcheck**: n8n only starts once PostgreSQL answers `pg_isready`.
+- **Secrets**: only in `.env` (git-ignored). `N8N_ENCRYPTION_KEY` encrypts the stored credentials.
+
+The live demo runs on n8n Cloud, because the Telegram Trigger needs a public HTTPS URL. To run the bot locally, add a tunnel (ngrok or cloudflared) and set `WEBHOOK_URL` in `.env`.
+
+---
+
 ## How to test
 
 | Test | How | Expected |
