@@ -1,0 +1,142 @@
+{
+  "name": "WF5 - Alertes erreurs",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "8410577e-f666-4694-a732-70022a2aebb3",
+      "name": "Quand un workflow échoue",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "cachedResultName": "Radar Carrière"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "profil"
+        },
+        "options": {}
+      },
+      "id": "5e55db79-9fea-4f44-ba61-faf748387829",
+      "name": "Lire profil",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? String(j[k] ?? '').trim() : ''; };\nlet chatId = '';\nfor (const i of $input.all()) if (get(i.json, 'cle') === 'chat_id') chatId = get(i.json, 'valeur');\nif (!chatId) return [];\nconst e = $('Quand un workflow échoue').first().json;\nconst texte = '⚠️ Le workflow « ' + (e.workflow?.name || '?') + ' » a échoué.\\n' +\n  'Nœud : ' + (e.execution?.lastNodeExecuted || '?') + '\\n' +\n  'Erreur : ' + String(e.execution?.error?.message || 'inconnue').slice(0, 400) + '\\n' +\n  'Exécution : ' + (e.execution?.url || ('n°' + (e.execution?.id || '?')));\nreturn [{ json: { chat_id: chatId, texte } }];"
+      },
+      "id": "fad93582-fede-4f37-b2d0-145fee85c15a",
+      "name": "Préparer l'alerte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.texte }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "7d00bf74-a7de-4b5a-a82a-cf7110e0c53f",
+      "name": "Alerte Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        0
+      ],
+      "webhookId": "510597bb-e7f1-4267-a335-6effec8804be",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "CW4EdhqkPMVXJwPu",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Quand un workflow échoue": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil": {
+      "main": [
+        [
+          {
+            "node": "Préparer l'alerte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer l'alerte": {
+      "main": [
+        [
+          {
+            "node": "Alerte Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "de02c8e0-cd5a-4bdd-9b68-c5be59f5997f",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "191c9922f339b7c49d9c2c3c9350f3a11390d7229b3477a9bd0f35b6670f9368"
+  },
+  "nodeGroups": [],
+  "id": "LOD6t9CYzdLRUZAo",
+  "tags": []
+}
