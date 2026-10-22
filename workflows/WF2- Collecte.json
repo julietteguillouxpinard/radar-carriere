@@ -1,0 +1,826 @@
+{
+  "name": "WF2- Collecte",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bc2c53d7-9408-4003-b83c-09b9367482a3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "mode": "list",
+          "cachedResultName": "Radar Carrière",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "profil",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "78543407-93d3-4d93-a283-603f6df3551c",
+      "name": "Lire profil",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lit l'onglet profil, même si les en-têtes ont un espace ou un accent\nconst norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst p = {};\nlet chat_id = '';\nfor (const i of $input.all()) {\n  const j = i.json;\n  const kCle = Object.keys(j).find(k => norm(k) === 'cle');\n  const kVal = Object.keys(j).find(k => norm(k) === 'valeur');\n  const cle = String(j[kCle] ?? '').trim();\n  const val = String(j[kVal] ?? '').trim();\n  if (!cle) continue;\n  if (cle === 'chat_id') { chat_id = val; continue; }\n  if (cle.startsWith('_') || !val) continue;   // lignes techniques (_modif_en_attente) ou vides\n  p[cle] = val;\n}\nreturn [{ json: { profil: p, profil_texte: JSON.stringify(p), chat_id } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "394e117e-2ae6-4b84-a8a1-6de63a3ad9f9",
+      "name": "Profil en objet"
+    },
+    {
+      "parameters": {
+        "jsCode": "// MODE DÉMO : ces offres ne sont ajoutées que si tu lances le workflow à la main\n// (bouton Execute workflow). La recherche automatique de 3 h ne les ajoute jamais.\nif ($execution.mode !== 'test') return [];\n\nconst run = Date.now().toString(36);            // identifiant unique à chaque lancement\nconst dans = j => new Date(Date.now() + j * 86400000).toISOString().slice(0, 10);\nconst lien = t => 'https://www.google.com/search?q=' + encodeURIComponent(t);\n\nreturn [\n  { json: { offer_id: 'D' + run + '1', intitule: 'Stage Data Scientist – IA générative', societe: 'NovaMobility', ville: 'Paris', pays: 'France', contrat: 'Stage', duree: '6 mois', salaire: '1 500 € / mois', deadline: dans(10), lien: lien('stage data scientist IA générative Paris'), texte: 'Stage de 6 mois à Paris dans l’équipe R&D véhicule autonome. Modèles de diffusion pour la planification de trajectoire, Python, PyTorch, évaluation de modèles. Anglais courant. Profil école d’ingénieurs ou double diplôme data et management.' } },\n  { json: { offer_id: 'D' + run + '2', intitule: 'Stage Machine Learning Engineer – Computer Vision', societe: 'Lumen Health', ville: 'Paris', pays: 'France', contrat: 'Stage', duree: '5 à 6 mois', salaire: '1 400 € / mois', deadline: dans(20), lien: lien('stage machine learning computer vision Paris'), texte: 'Startup en imagerie médicale. Entraînement et déploiement de modèles de vision par ordinateur, deep learning, Python. Bureau à Paris, deux jours de télétravail par semaine.' } },\n  { json: { offer_id: 'D' + run + '3', intitule: 'Stage Consultant·e Data & IA', societe: 'Atlas Conseil', ville: 'Paris', pays: 'France', contrat: 'Stage', duree: '6 mois', salaire: '1 600 € / mois', deadline: dans(30), lien: lien('stage consultant data IA Paris'), texte: 'Cabinet de conseil en stratégie data. Missions de cadrage de projets IA pour de grands groupes, analyse de données, SQL, Python, restitution aux clients.' } },\n  { json: { offer_id: 'D' + run + '4', intitule: 'Vendeur·se en boutique', societe: 'Maison Lenoir', ville: 'Lyon', pays: 'France', contrat: 'CDI', duree: 'Temps plein', salaire: 'SMIC', deadline: '', lien: lien('vendeur boutique Lyon CDI'), texte: 'Accueil et conseil client en boutique de prêt-à-porter, gestion des stocks, encaissement. Disponible le samedi.' } }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ],
+      "id": "afa975c8-e323-4de3-8db5-8035438d96f8",
+      "name": "Offres de démo"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  const o = item.json;\n  return {\n    json: {\n      id: String(o.offer_id || '').trim(),\n      titre: (o.intitule || '').trim(),\n      entreprise: (o.societe || '').trim(),\n      lieu: (o.ville || '').trim(),\n      pays: (o.pays || '').trim(),\n      remote: 'non précisé',\n      type_contrat: o.contrat || 'non précisé',\n      duree: o.duree || 'non précisée',\n      salaire: o.salaire || 'non précisé',\n      deadline: o.deadline || '',\n      url: (o.lien || '').trim(),\n      source: 'démo',\n      description: (o.texte || '').trim().slice(0, 1500)\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "558d1afa-2ef6-4537-bdaf-6943ace8eeb1",
+      "name": "Normaliser démo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "42ec1cf7-e287-4c74-931d-682d99449fe8",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7c2a4283-1122-4a63-b599-96ed1aff9596",
+              "leftValue": "={{ $json.titre }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1344,
+        208
+      ],
+      "id": "de546e61-a063-47f5-8de3-99b9e94930fe",
+      "name": "Offre valide ?"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "mode": "list",
+          "cachedResultName": "Radar Carrière",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1124099516,
+          "mode": "list",
+          "cachedResultName": "offres",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit#gid=1124099516"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1568,
+        208
+      ],
+      "id": "ab5ad0bc-dad5-4907-877f-b885bebcb600",
+      "name": "Lire offres connues",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1) enlève les offres déjà dans le Sheet  2) enlève les doublons entre sources\n// 3) garde les offres liées à tes domaines  4) enlève les mots exclus  5) max 15 offres (quota IA)\nconst norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').trim().toLowerCase();\nconst get = (j, key) => { const k = Object.keys(j).find(x => norm(x) === key); return k ? j[k] : ''; };\n\nconst connues = $('Lire offres connues').all().map(i => i.json);\nconst dejaIds = new Set(connues.map(j => String(get(j, 'id'))).filter(Boolean));\nconst dejaTitres = new Set(connues.map(j => norm(get(j, 'titre')) + '|' + norm(get(j, 'entreprise'))).filter(t => t !== '|'));\n\nconst profil = $('Profil en objet').first().json.profil || {};\nconst pget = key => { const k = Object.keys(profil).find(x => norm(x).startsWith(key)); return k ? profil[k] : ''; };\nconst motsDomaines = {\n  'data/ia': ['data', 'machine learning', 'deep learning', ' ml ', ' ai ', ' ia ', 'intelligence artificielle', 'scientist', 'analytics', 'llm', 'computer vision', 'nlp'],\n  'software / tech': ['software', 'developer', 'developpeur', 'engineer', 'backend', 'frontend', 'full stack', 'devops', 'cloud'],\n  'ingenierie / r&d': ['r&d', 'research', 'recherche', 'ingenieur', 'engineer', 'aerospace', 'robotics', 'robotique'],\n  'conseil': ['consult', 'conseil', 'strategy', 'strategie'],\n  'finance': ['finance', 'financial', 'banking', 'audit', 'investment', 'm&a', 'private equity'],\n  'produit': ['product', 'produit'],\n  'marketing': ['marketing', 'growth', 'brand', 'communication'],\n  'supply chain / operations': ['supply chain', 'logistics', 'logistique', 'operations', 'procurement', 'achats'],\n  'entrepreneuriat': ['founder', 'entrepreneur', 'business developer', 'startup']\n};\nconst mots = [];\nfor (const d of String(pget('domaines')).split(',')) mots.push(...(motsDomaines[norm(d)] || []));\nfor (const w of String(pget('autre domaine')).split(/[,;]/)) if (norm(w)) mots.push(norm(w));\nconst exclus = String(pget('mots a exclure') || pget('mot a exclure')).split(/[,;]/).map(norm).filter(Boolean);\n\nconst MAX = 15;\nconst vus = new Set();\nconst resultat = [];\nfor (const i of $('Offre valide ?').all()) {\n  const o = i.json;\n  const demo = o.source === 'démo';\n  const cle = norm(o.titre) + '|' + norm(o.entreprise);\n  if (dejaIds.has(String(o.id)) || vus.has(cle)) continue;\n  if (!demo && dejaTitres.has(cle)) continue;          // les offres de démo peuvent revenir à chaque répétition\n  const texte = ' ' + norm(o.titre + ' ' + o.description).replace(/[^a-z0-9/&]+/g, ' ') + ' ';\n  if (exclus.some(m => texte.includes(m))) continue;\n  if (!demo && mots.length && !mots.some(m => texte.includes(m))) continue;   // la démo garde aussi l'offre hors sujet, pour montrer la note basse\n  vus.add(cle);\n  resultat.push(i);\n  if (resultat.length >= MAX) break;\n}\nreturn resultat;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1792,
+        208
+      ],
+      "id": "3829fd62-a365-48ee-be14-6847c41bcaf4",
+      "name": "Retirer doublons"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Profil du candidat (JSON) :\n{{ $('Profil en objet').first().json.profil_texte }}\n\nVoici {{ $json.nb }} offres au format JSON :\n{{ $json.offres_json }}\n\nPour CHAQUE offre, donne un score de 0 à 10 selon l'adéquation avec le profil (domaine, type de contrat, durée, lieu et télétravail, niveau, langues).\nRepères : 0-2 = hors sujet, 3-4 = peu adapté, 5-6 = moyen, 7-8 = bon, 9-10 = excellent.\nRédige en français, même si l'offre est en anglais ou en allemand.\nLes trois champs sont obligatoires pour chaque offre :\n- \"score\" : entier de 0 à 10 ;\n- \"resume\" : 2 phrases maximum décrivant l'offre ;\n- \"raison\" : 1 phrase qui justifie la note en tutoyant le candidat et en citant un élément précis de son profil (ex. « ton expérience chez … », « tu cherches un stage à Paris … »).\n\nRéponds UNIQUEMENT avec un tableau JSON valide, sans texte autour, une entrée par offre :\n[{\"id\": \"<id de l'offre>\", \"score\": 0, \"resume\": \"...\", \"raison\": \"...\"}]",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Tu es un conseiller de carrière expert en recrutement de stagiaires et de jeunes diplômés. Tu évalues objectivement l'adéquation entre des offres d'emploi et le profil d'un candidat. Tu n'inventes jamais d'information absente des offres. Tu réponds toujours et uniquement avec du JSON valide, sans texte autour."
+            }
+          ]
+        },
+        "batching": {
+          "batchSize": 4,
+          "delayBetweenBatches": 15000
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2128,
+        208
+      ],
+      "id": "fd5b6c39-a685-4e4f-ad57-1c1ddc4aca8a",
+      "name": "Noter offre",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2128,
+        432
+      ],
+      "id": "7a408570-5d71-4028-8746-fc813217ac88",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "cICgLVvUm6bhDC1h",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Associe chaque note de l'IA à son offre grâce à l'id (validation du schéma + repli si illisible)\nconst offres = $('Retirer doublons').all().map(i => i.json);\nconst brut = String($input.first().json.text || $input.first().json.output || '');\nlet notes = [];\ntry {\n  const propre = brut.replace(/```json|```/g, '').trim();\n  notes = JSON.parse(propre.slice(propre.indexOf('['), propre.lastIndexOf(']') + 1));\n} catch (e) {}\nconst parId = {};\nfor (const n of (Array.isArray(notes) ? notes : [])) if (n && n.id !== undefined) parId[String(n.id)] = n;\nconst maintenant = new Date().toISOString();\n\nreturn offres.map(o => {\n  const n = parId[String(o.id)];\n  const brutScore = n ? Number(n.score) : NaN;\n  const score = Number.isFinite(brutScore) && brutScore >= 0 && brutScore <= 10 ? Math.round(brutScore) : -1;\n  return { json: {\n    ...o,\n    score,\n    resume: (n && (n.resume || n.summary)) || '',\n    raison: (n && (n.raison || n.reason || n.justification)) || (n ? '' : 'réponse IA illisible'),\n    statut: score < 0 ? 'erreur IA' : 'nouveau',\n    date_ajout: maintenant,\n    date_decision: ''\n  }};\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        208
+      ],
+      "id": "544b55e8-02e9-47c2-95f0-7fa5a0242b68",
+      "name": "Lire réponse IA"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0",
+          "mode": "list",
+          "cachedResultName": "Radar Carrière",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1124099516,
+          "mode": "list",
+          "cachedResultName": "offres",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1aBYhSA3oQVE-B0PznycfYSHrJnhHkRgXBePJj4mFkm0/edit#gid=1124099516"
+        },
+        "columns": {
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false,
+          "mappingMode": "defineBelow",
+          "matchingColumns": [],
+          "schema": [
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "id",
+              "id": "id",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "titre",
+              "id": "titre",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "entreprise ",
+              "id": "entreprise ",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "lieu",
+              "id": "lieu",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "pays",
+              "id": "pays",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "remote",
+              "id": "remote",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "type_contrat",
+              "id": "type_contrat",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "durée",
+              "id": "durée",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "salaire",
+              "id": "salaire",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "deadline",
+              "id": "deadline",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "url",
+              "id": "url",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "source",
+              "id": "source",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "description",
+              "id": "description",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "score",
+              "id": "score",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "resume",
+              "id": "resume",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "raison",
+              "id": "raison",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "statut",
+              "id": "statut",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "date_ajout",
+              "id": "date_ajout",
+              "required": false,
+              "type": "string"
+            },
+            {
+              "canBeUsedToMatch": true,
+              "defaultMatch": false,
+              "display": true,
+              "displayName": "date_decision",
+              "id": "date_decision",
+              "required": false,
+              "type": "string"
+            }
+          ],
+          "value": {
+            "date_ajout": "={{ $json.date_ajout }}",
+            "date_decision": "={{ $json.date_decision }}",
+            "deadline": "={{ $json.deadline }}",
+            "description": "={{ $json.description }}",
+            "durée": "={{ $json.duree }}",
+            "entreprise ": "={{ $json.entreprise }}",
+            "id": "={{ $json.id }}",
+            "lieu": "={{ $json.lieu }}",
+            "pays": "={{ $json.pays }}",
+            "raison": "={{ $json.raison }}",
+            "remote": "={{ $json.remote }}",
+            "resume": "={{ $json.resume }}",
+            "salaire": "={{ $json.salaire }}",
+            "score": "={{ $json.score }}",
+            "source": "={{ $json.source }}",
+            "statut": "={{ $json.statut }}",
+            "titre": "={{ $json.titre }}",
+            "type_contrat": "={{ $json.type_contrat }}",
+            "url": "={{ $json.url }}"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2624,
+        208
+      ],
+      "id": "49db670b-9ebd-4f7f-8d2b-4196f5494dfb",
+      "name": "Enregistrer offre",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "VFikKYGtuqSbo7xQ",
+          "name": "Google Sheets account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 3
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        208
+      ],
+      "id": "100664e3-70c1-4d51-8215-97586eaceb70",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://remotive.com/api/remote-jobs?search=data&limit=40",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "a822d2c7-6928-43f8-8feb-718c3e019906",
+      "name": "Source Remotive",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput",
+      "notes": "Offres en télétravail (API publique gratuite, sans clé)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const strip = h => String(h || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\\s+/g, ' ').trim();\nconst types = { full_time: 'Temps plein', part_time: 'Temps partiel', contract: 'Contrat / CDD', internship: 'Stage', freelance: 'Freelance', other: 'Autre' };\nconst jobs = $input.all().flatMap(i => Array.isArray(i.json.jobs) ? i.json.jobs : []);\nreturn jobs.map(j => ({ json: {\n  id: j.id ? 'R' + j.id : '',\n  titre: String(j.title || '').trim(),\n  entreprise: String(j.company_name || '').trim(),\n  lieu: String(j.candidate_required_location || 'Remote').trim(),\n  pays: String(j.candidate_required_location || '').trim(),\n  remote: 'oui',\n  type_contrat: types[j.job_type] || j.job_type || 'non précisé',\n  duree: 'non précisée',\n  salaire: String(j.salary || '').trim() || 'non précisé',\n  deadline: '',\n  url: String(j.url || '').trim(),\n  source: 'Remotive',\n  description: strip(j.description).slice(0, 1500)\n}}));"
+      },
+      "id": "d911c9e7-2921-4ed4-ad32-20f3d663e9d8",
+      "name": "Normaliser Remotive",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.arbeitnow.com/api/job-board-api",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "429525bd-b3a6-446f-8f55-d4a045f78e3b",
+      "name": "Source Arbeitnow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        400
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput",
+      "notes": "Offres Europe (API publique gratuite, sans clé)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const strip = h => String(h || '').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\\s+/g, ' ').trim();\n// identifiant court (Telegram limite les boutons à 64 octets)\nconst hash = s => { let h = 5381; for (const c of String(s)) h = ((h << 5) + h + c.charCodeAt(0)) >>> 0; return h.toString(36); };\nconst jobs = $input.all().flatMap(i => Array.isArray(i.json.data) ? i.json.data : []);\nreturn jobs.map(j => {\n  const t = (j.job_types || []).join(', ');\n  const stage = /intern|praktik|stage|trainee|werkstudent|apprenti/i.test((j.title || '') + ' ' + t);\n  return { json: {\n    id: 'A' + hash(j.slug || j.url || j.title),\n    titre: String(j.title || '').trim(),\n    entreprise: String(j.company_name || '').trim(),\n    lieu: String(j.location || '').trim(),\n    pays: '',\n    remote: j.remote ? 'oui' : 'non précisé',\n    type_contrat: stage ? 'Stage' : (t || 'non précisé'),\n    duree: 'non précisée',\n    salaire: 'non précisé',\n    deadline: '',\n    url: String(j.url || '').trim(),\n    source: 'Arbeitnow',\n    description: strip(j.description).slice(0, 1500)\n  }};\n});"
+      },
+      "id": "b858c23e-e204-4ee1-9797-9852752f005b",
+      "name": "Normaliser Arbeitnow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "747a2105-04d6-43bf-9510-76fb6a572e38",
+      "name": "Fusion sources",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const offres = $input.all().map(i => i.json);\nconst lot = offres.map(o => ({\n  id: o.id, titre: o.titre, entreprise: o.entreprise, lieu: o.lieu, pays: o.pays,\n  remote: o.remote, type_contrat: o.type_contrat, duree: o.duree, salaire: o.salaire,\n  description: String(o.description || '').slice(0, 600)\n}));\nreturn [{ json: { nb: lot.length, offres_json: JSON.stringify(lot) } }];"
+      },
+      "id": "59230fcc-6292-4ce4-93b0-b5e98c20741c",
+      "name": "Préparer lot",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1904,
+        208
+      ],
+      "notes": "Regroupe toutes les offres en 1 seul appel IA (le quota gratuit Gemini est de 5 requêtes/minute)"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire profil": {
+      "main": [
+        [
+          {
+            "node": "Profil en objet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Profil en objet": {
+      "main": [
+        [
+          {
+            "node": "Offres de démo",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Source Remotive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Source Arbeitnow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offre valide ?": {
+      "main": [
+        [
+          {
+            "node": "Lire offres connues",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire offres connues": {
+      "main": [
+        [
+          {
+            "node": "Retirer doublons",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Noter offre",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Noter offre": {
+      "main": [
+        [
+          {
+            "node": "Lire réponse IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lire réponse IA": {
+      "main": [
+        [
+          {
+            "node": "Enregistrer offre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Source Remotive": {
+      "main": [
+        [
+          {
+            "node": "Normaliser Remotive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliser Remotive": {
+      "main": [
+        [
+          {
+            "node": "Fusion sources",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Source Arbeitnow": {
+      "main": [
+        [
+          {
+            "node": "Normaliser Arbeitnow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliser Arbeitnow": {
+      "main": [
+        [
+          {
+            "node": "Fusion sources",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Fusion sources": {
+      "main": [
+        [
+          {
+            "node": "Offre valide ?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Lire profil",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retirer doublons": {
+      "main": [
+        [
+          {
+            "node": "Préparer lot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Préparer lot": {
+      "main": [
+        [
+          {
+            "node": "Noter offre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Offres de démo": {
+      "main": [
+        [
+          {
+            "node": "Normaliser démo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliser démo": {
+      "main": [
+        [
+          {
+            "node": "Fusion sources",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "LOD6t9CYzdLRUZAo",
+    "timezone": "Europe/Paris"
+  },
+  "versionId": "ec16d471-816e-40ce-95ce-6a08be3abbb7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "191c9922f339b7c49d9c2c3c9350f3a11390d7229b3477a9bd0f35b6670f9368"
+  },
+  "nodeGroups": [],
+  "id": "8utj7AsjN3nuCAX1",
+  "tags": []
+}
